@@ -67,9 +67,7 @@ namespace futoapp
 
                     case 2: //Beállítások
                         Console.Clear();
-
-                        WriteCentered("Enterre tovább...");
-                        Console.ReadLine();
+                        Beallitasok();
 
                         break;
 
@@ -140,36 +138,6 @@ namespace futoapp
                 Console.WriteLine($"Jelenlegi Cpoint: {cPoint}");
             }
         }
-        #region EgyeniAdatFelvitel
-        public static void Egyeniadatfelvitel()
-        {
-            WriteCentered("*** ÚJ EGYÉNI ADAT FELVITELE ***\n");
-            WriteCenteredText("Magasság(cm): ");
-            int magassag = int.Parse(Console.ReadLine());
-            WriteCenteredText("Testtömeg(kg): ");
-            int testtomeg = int.Parse(Console.ReadLine());
-            WriteCenteredText("Nyugalmi pulzus (példa: 60/perc): ");
-            string nyugpulz = Console.ReadLine();
-            WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
-            string celido = Console.ReadLine();
-            
-        }
-        #endregion
-        # region EdzésiAdatfelvitel
-        public static void Edzesiadatfelvitel()
-        {
-            WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
-            WriteCenteredText("Dátum (éé-hh-nn): ");
-            int datum = int.Parse(Console.ReadLine());
-            WriteCenteredText("Távloság (km): ");
-            int tavolsag = int.Parse(Console.ReadLine());
-            WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
-            string ido = Console.ReadLine();
-            WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
-            string maxpulz = Console.ReadLine();
-            
-        }
-        #endregion 
         #region Középrehelyezés
         static void WriteCentered(string text)
         {
@@ -213,6 +181,145 @@ namespace futoapp
 
             // Kurzor pozíciójának beállítása.
             return Console.ReadLine();
+        }
+        #endregion
+        #region EgyeniAdatFelvitel
+        public static void Egyeniadatfelvitel()
+        {
+            WriteCentered("*** ÚJ EGYÉNI ADAT FELVITELE ***\n");
+            WriteCenteredText("Magasság(cm): ");
+            int magassag = int.Parse(Console.ReadLine());
+            WriteCenteredText("Testtömeg(kg): ");
+            int testtomeg = int.Parse(Console.ReadLine());
+            WriteCenteredText("Nyugalmi pulzus (példa: 60/perc): ");
+            string nyugpulz = Console.ReadLine();
+            WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
+            string celido = Console.ReadLine();
+
+        }
+        #endregion
+        # region EdzésiAdatfelvitel
+        public static void Edzesiadatfelvitel()
+        {
+            WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
+            WriteCenteredText("Dátum (éé-hh-nn): ");
+            int datum = int.Parse(Console.ReadLine());
+            WriteCenteredText("Távloság (km): ");
+            int tavolsag = int.Parse(Console.ReadLine());
+            WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
+            string ido = Console.ReadLine();
+            WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
+            string maxpulz = Console.ReadLine();
+
+        }
+        #endregion 
+        #region Beállítások
+        static int belcPoint = 0;
+        public static void Beallitasok()
+        {
+            belcPoint = 0;
+            do
+            {
+                bool selected = false;
+                do
+                {
+                    AlShowMenu(belcPoint);
+                    switch (Console.ReadKey().Key)
+                    {
+                        case ConsoleKey.Enter:
+                            selected = true;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (belcPoint > 0)
+                            {
+                                belcPoint -= 1;
+                            }
+                            break;
+                        case ConsoleKey.DownArrow:
+                            if (belcPoint < 3)
+                            {
+                                belcPoint += 1;
+                            }
+                            break;
+                    }
+                } while (!selected);
+                    
+                switch (belcPoint)
+                {
+                    case 0:  //Téma
+                        Console.Clear();
+                        //Tema(); -- Comment, mivel meg nincs megcsinalva
+
+                        WriteCentered("Enterre tovább...");
+                        Console.ReadLine();
+
+                        break;
+
+                    case 1: //Szövegelrendezés
+                        Console.Clear();
+                        //Szovegelrendezes(); -- Comment, mivel meg nincs megcsinalva
+
+                        WriteCentered("Enterre tovább...");
+                        Console.ReadLine();
+
+                        break;
+
+                    case 2: // Kilépés
+                        Console.Clear();
+                        WriteCentered("Biztosan kilép? (i/n): ");
+                        if (Console.ReadKey().Key == ConsoleKey.I)
+                        {
+
+                            Console.Clear();
+                            Fomenu();
+
+                        }
+                        else
+                        {
+                            belcPoint = 0;
+                        }
+                        break;
+                }
+
+            } while (belcPoint != 2);
+            void AlShowMenu(int belcPoint)
+            {
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                WriteCentered("--- Beállítások ---");
+                Console.ForegroundColor = ConsoleColor.White;
+
+                if (belcPoint == 0)
+                {
+
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                WriteCentered("Téma");
+                if (belcPoint == 1)
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                WriteCentered("Szöveg elrendezés (kezdetleges)");
+                if (belcPoint == 2)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                }
+                WriteCentered("Kilépés");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine($"Jelenlegi Cpoint: {belcPoint}");
+            }
         }
         #endregion
     }
