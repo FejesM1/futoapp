@@ -5,6 +5,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace futoapp
 {
     internal class Program
@@ -46,33 +47,35 @@ namespace futoapp
 
                 switch (cPoint)
                 {
-                    case 0: 
+                    case 0:  //Egyéniadat felvitele
                         Console.Clear();
-                        
+                        Egyeniadatfelvitel();
 
                         WriteCentered("Enterre tovább...");
                         Console.ReadLine();
 
                         break;
 
-                    case 1: 
+                    case 1: //Edzésiadat felvitele
+                        Console.Clear();
+                        Edzesiadatfelvitel();
+
+                        WriteCentered("Enterre tovább...");
+                        Console.ReadLine();
+
+                        break;
+
+                    case 2: //Beállítások
                         Console.Clear();
 
                         WriteCentered("Enterre tovább...");
                         Console.ReadLine();
 
                         break;
-                    case 2: 
-                        Console.Clear();
 
-                        WriteCentered("Enterre tovább...");
-                        Console.ReadLine();
-
-                        break;
 
                     case 3: // Kilépés
                         Console.Clear();
-                        Console.Beep();
                         WriteCentered("Biztosan kilép? (i/n): ");
                         if (Console.ReadKey().Key == ConsoleKey.I)
                         {
@@ -98,6 +101,7 @@ namespace futoapp
 
                 if (cPoint == 0)
                 {
+                    
                     Console.ForegroundColor = ConsoleColor.Green;
                 }
                 else
@@ -107,7 +111,7 @@ namespace futoapp
                 WriteCentered("Egyéni adatok");
                 if (cPoint == 1)
                 {
-                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.ForegroundColor = ConsoleColor.Green;
                 }
                 else
                 {
@@ -142,16 +146,30 @@ namespace futoapp
             WriteCentered("*** ÚJ EGYÉNI ADAT FELVITELE ***\n");
             WriteCenteredText("Magasság(cm): ");
             int magassag = int.Parse(Console.ReadLine());
-            WriteCenteredText("Testtömeg(kg):");
+            WriteCenteredText("Testtömeg(kg): ");
             int testtomeg = int.Parse(Console.ReadLine());
-            WriteCenteredText("Nyugalmi pulzus (példa: 60-70/ perc): ");
-            List<string> nyugpulzlista = new List<string>();
-            nyugpulzlista.Add(Console.ReadLine());
-            WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
+            WriteCenteredText("Nyugalmi pulzus (példa: 60/perc): ");
+            string nyugpulz = Console.ReadLine();
+            WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
             string celido = Console.ReadLine();
             
         }
         #endregion
+        # region EdzésiAdatfelvitel
+        public static void Edzesiadatfelvitel()
+        {
+            WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
+            WriteCenteredText("Dátum (éé-hh-nn): ");
+            int datum = int.Parse(Console.ReadLine());
+            WriteCenteredText("Távloság (km): ");
+            int tavolsag = int.Parse(Console.ReadLine());
+            WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
+            string ido = Console.ReadLine();
+            WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
+            string maxpulz = Console.ReadLine();
+            
+        }
+        #endregion 
         #region Középrehelyezés
         static void WriteCentered(string text)
         {
