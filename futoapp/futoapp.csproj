@@ -44,6 +44,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Models\Edzes.cs" />
+    <Compile Include="Models\Futas.cs" />
     <Compile Include="Models\Szemely.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
