@@ -1,21 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-
 
 namespace futoapp
 {
     internal class Program
     {
         static int cPoint = 0;
+
+        static ConsoleColor activeBackground = ConsoleColor.Black;
+        static ConsoleColor activeForeground = ConsoleColor.White;
+        static ConsoleColor altTitle = ConsoleColor.Magenta;
+        static ConsoleColor activeTitle = ConsoleColor.Yellow;
+        static ConsoleColor activeBack = ConsoleColor.Red;
         static void Main(string[] args)
         {
+            ApplyTheme(); //színek biztosítása
             Fomenu();
-            
         }
+        #region Téma színek
+        static void ApplyTheme()
+        {
+            Console.BackgroundColor = activeBackground;
+            Console.ForegroundColor = activeForeground;
+        }
+        #endregion
+        #region Alcím
+        static void CurrentaltTitle()
+        {
+            Console.ForegroundColor = altTitle;
+        }
+        #endregion
+        #region Cím
+        static void CurrentTitle()
+        {
+            Console.ForegroundColor = activeTitle;
+        }
+        #endregion
+        #region Jelenlegi választás
+        static void OptionColor()
+        {
+            if (activeBackground == ConsoleColor.DarkGreen)
+            {
+                Console.ForegroundColor = ConsoleColor.Blue;
+            }
+            else
+                Console.ForegroundColor = ConsoleColor.Green;
+        }
+        #endregion
         static void Fomenu()
         {
             cPoint = 0;
@@ -25,22 +59,16 @@ namespace futoapp
                 do
                 {
                     ShowMenu1(cPoint);
-                    switch (Console.ReadKey().Key)
+                    switch (Console.ReadKey(true).Key) 
                     {
                         case ConsoleKey.Enter:
                             selected = true;
                             break;
                         case ConsoleKey.UpArrow:
-                            if (cPoint > 0)
-                            {
-                                cPoint -= 1;
-                            }
+                            if (cPoint > 0) cPoint -= 1;
                             break;
                         case ConsoleKey.DownArrow:
-                            if (cPoint < 3)
-                            {
-                                cPoint += 1;
-                            }
+                            if (cPoint < 5) cPoint += 1;
                             break;
                     }
                 } while (!selected);
@@ -50,37 +78,43 @@ namespace futoapp
                     case 0:  //Egyéniadat felvitele
                         Console.Clear();
                         Egyeniadatfelvitel();
-
                         WriteCentered("Enterre tovább...");
                         Console.ReadLine();
-
                         break;
 
                     case 1: //Edzésiadat felvitele
                         Console.Clear();
                         Edzesiadatfelvitel();
-
                         WriteCentered("Enterre tovább...");
                         Console.ReadLine();
-
                         break;
 
-                    case 2: //Beállítások
+                    case 2: //Egyéniadat módosítása
+                        Console.Clear();
+                        WriteCentered("Enterre tovább...");
+                        Console.ReadLine();
+                        break;
+
+                    case 3: //Edzésiadatok megjelenítése
+                        Console.Clear();
+                        WriteCentered("Enterre tovább...");
+                        Console.ReadLine();
+                        break;
+
+                    case 4: //Beállítások
                         Console.Clear();
                         Beallitasok();
-
+                        
                         break;
 
-
-                    case 3: // Kilépés
+                    case 5: // Kilépés
                         Console.Clear();
                         WriteCentered("Biztosan kilép? (i/n): ");
                         if (Console.ReadKey().Key == ConsoleKey.I)
                         {
-                            
                             Console.Clear();
-                            break;
-                            
+                           
+                            return;
                         }
                         else
                         {
@@ -89,59 +123,50 @@ namespace futoapp
                         break;
                 }
 
-            } while (cPoint != 3);
-            void ShowMenu1(int cPoint)
-            {
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                WriteCentered("*** Futó App ***");
-                Console.ForegroundColor = ConsoleColor.White;
-
-                if (cPoint == 0)
-                {
-                    
-                    Console.ForegroundColor = ConsoleColor.Green;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                WriteCentered("Egyéni adatok");
-                if (cPoint == 1)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                WriteCentered("Edzési adatok");
-                if (cPoint == 2)
-                {
-                    Console.ForegroundColor = ConsoleColor.Magenta;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                WriteCentered("Beállítások");
-                if (cPoint == 3)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                WriteCentered("Kilépés");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Jelenlegi Cpoint: {cPoint}");
-            }
+            } while (true);
         }
+
+        static void ShowMenu1(int cPoint)
+        {
+            
+            ApplyTheme();
+            
+            Console.Clear();
+
+            CurrentTitle();
+            WriteCentered("*** Futó App ***");
+            
+            Console.ForegroundColor = activeForeground;
+
+            
+            void WriteOption(string text, int index)
+            {
+                if (cPoint == index) OptionColor();
+                else Console.ForegroundColor = activeForeground;
+                WriteCentered(text);
+            }
+
+            WriteOption("Egyéni adatok", 0);
+            WriteOption("Edzési adatok", 1);
+            WriteOption("Egyéni adat módosítása", 2);
+            WriteOption("Edzési adatok megjelenítése", 3);
+
+           
+            if (cPoint == 4) Console.ForegroundColor = altTitle;
+            else Console.ForegroundColor = activeForeground;
+            WriteCentered("Beállítások");
+
+            if (cPoint == 5) Console.ForegroundColor = activeBack;
+            else Console.ForegroundColor = activeForeground;
+            WriteCentered("Kilépés");
+
+            Console.ForegroundColor = activeForeground;
+            Console.WriteLine($"\nJelenlegi Cpoint: {cPoint}");
+        }
+
         #region Középrehelyezés
         static void WriteCentered(string text)
         {
-            // Az ANSI kódok eltávolítása a hosszúság számításához, mert valamiért beleszámít.
             string StripAnsi(string Rtext)
             {
                 return System.Text.RegularExpressions.Regex.Replace(Rtext, @"\u001b\[[0-9;]*m", "");
@@ -154,10 +179,9 @@ namespace futoapp
             Console.WriteLine(new string(' ', leftPadding) + text);
         }
         #endregion
-        #region Középrehelyezés Balra
+        #region Középrehelyezés Szöveg
         static void WriteCenteredText(string text)
         {
-            // Az ANSI kódok eltávolítása a hosszúság számításához, mert valamiért beleszámít.
             string StripAnsi(string Rtext)
             {
                 return System.Text.RegularExpressions.Regex.Replace(Rtext, @"\u001b\[[0-9;]*m", "");
@@ -170,23 +194,14 @@ namespace futoapp
             Console.Write(new string(' ', leftPadding) + text);
         }
         #endregion
-        #region Középen beolvasás
-        static string ReadCentered(string prompt)
-        {
-            int width = Console.WindowWidth;
-            int leftPadding = (width - prompt.Length) / 2;
-            if (leftPadding < 0) leftPadding = 0;
 
-            Console.Write(new string(' ', leftPadding) + prompt);
-
-            // Kurzor pozíciójának beállítása.
-            return Console.ReadLine();
-        }
-        #endregion
         #region EgyeniAdatFelvitel
         public static void Egyeniadatfelvitel()
         {
+            ApplyTheme(); // Színek biztosítása
+            CurrentTitle();
             WriteCentered("*** ÚJ EGYÉNI ADAT FELVITELE ***\n");
+            Console.ForegroundColor = activeForeground;
             WriteCenteredText("Magasság(cm): ");
             int magassag = int.Parse(Console.ReadLine());
             WriteCenteredText("Testtömeg(kg): ");
@@ -195,13 +210,16 @@ namespace futoapp
             string nyugpulz = Console.ReadLine();
             WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
             string celido = Console.ReadLine();
-
         }
         #endregion
+
         # region EdzésiAdatfelvitel
         public static void Edzesiadatfelvitel()
         {
+            ApplyTheme();
+            CurrentTitle();
             WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
+            Console.ForegroundColor = activeForeground;
             WriteCenteredText("Dátum (éé-hh-nn): ");
             int datum = int.Parse(Console.ReadLine());
             WriteCenteredText("Távloság (km): ");
@@ -210,11 +228,22 @@ namespace futoapp
             string ido = Console.ReadLine();
             WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
             string maxpulz = Console.ReadLine();
-
         }
-        #endregion 
+        #endregion
+        #region Középen beolvasás
+        static string ReadCentered(string prompt)
+        {
+            int width = Console.WindowWidth;
+            int leftPadding = (width - prompt.Length) / 2;
+            if (leftPadding < 0) leftPadding = 0;
+            Console.Write(new string(' ', leftPadding) + prompt);
+            // Kurzor pozíciójának beállítása.
+            return Console.ReadLine();
+        }
+        #endregion
         #region Beállítások
         static int belcPoint = 0;
+
         public static void Beallitasok()
         {
             belcPoint = 0;
@@ -224,102 +253,164 @@ namespace futoapp
                 do
                 {
                     AlShowMenu(belcPoint);
-                    switch (Console.ReadKey().Key)
+                    switch (Console.ReadKey(true).Key)
                     {
                         case ConsoleKey.Enter:
                             selected = true;
                             break;
                         case ConsoleKey.UpArrow:
-                            if (belcPoint > 0)
-                            {
-                                belcPoint -= 1;
-                            }
+                            if (belcPoint > 0) belcPoint -= 1;
                             break;
                         case ConsoleKey.DownArrow:
-                            if (belcPoint < 3)
-                            {
-                                belcPoint += 1;
-                            }
+                            if (belcPoint < 2) belcPoint += 1;
                             break;
                     }
                 } while (!selected);
-                    
+
                 switch (belcPoint)
                 {
                     case 0:  //Téma
                         Console.Clear();
-                        //Tema(); -- Comment, mivel meg nincs megcsinalva
-
-                        WriteCentered("Enterre tovább...");
-                        Console.ReadLine();
-
+                        Tema();
                         break;
 
                     case 1: //Szövegelrendezés
                         Console.Clear();
-                        //Szovegelrendezes(); -- Comment, mivel meg nincs megcsinalva
-
                         WriteCentered("Enterre tovább...");
                         Console.ReadLine();
-
                         break;
 
-                    case 2: // Kilépés
-                        Console.Clear();
-                        WriteCentered("Biztosan kilép? (i/n): ");
-                        if (Console.ReadKey().Key == ConsoleKey.I)
-                        {
-
-                            Console.Clear();
-                            Fomenu();
-
-                        }
-                        else
-                        {
-                            belcPoint = 0;
-                        }
-                        break;
+                    case 2: // Kilépés a Főmenübe
+                        
+                        return;
                 }
 
-            } while (belcPoint != 2);
-            void AlShowMenu(int belcPoint)
+            } while (true);
+        }
+
+        static void AlShowMenu(int belcPoint)
+        {
+            
+            ApplyTheme();
+            Console.Clear();
+            CurrentaltTitle();
+            WriteCentered("--- Beállítások ---");
+            Console.ForegroundColor = activeForeground;
+
+            if (belcPoint == 0) OptionColor();
+            else Console.ForegroundColor = activeForeground;
+            WriteCentered("Téma");
+
+            if (belcPoint == 1) OptionColor();
+            else Console.ForegroundColor = activeForeground;
+            WriteCentered("Szöveg elrendezés (kezdetleges)");
+
+            
+
+            if (belcPoint == 2) Console.ForegroundColor = activeBack;
+            else Console.ForegroundColor = activeForeground;
+            WriteCentered("Vissza");
+
+            Console.ForegroundColor = activeForeground;
+            Console.WriteLine($"\nJelenlegi Cpoint: {belcPoint}");
+        }
+
+        static void Tema()
+        {
+            belcPoint = 0;
+            do
             {
+                bool selected = false;
+                do
+                {
+                    AlShowMenu2(belcPoint);
+                    switch (Console.ReadKey(true).Key)
+                    {
+                        case ConsoleKey.Enter:
+                            selected = true;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (belcPoint > 0) belcPoint -= 1;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            if (belcPoint < 11) belcPoint += 1;
+                            break;
+                    }
+                } while (!selected);
+
+                
+                switch (belcPoint)
+                {
+                    case 0: activeBackground = ConsoleColor.Black; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.Red; break;
+                    case 1: activeBackground = ConsoleColor.White; activeForeground = ConsoleColor.Black; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.DarkYellow; activeBack = ConsoleColor.Red; break;
+                    case 2: activeBackground = ConsoleColor.DarkRed; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Blue; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.Blue; break;
+                    case 3: activeBackground = ConsoleColor.DarkMagenta; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Black; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.DarkYellow; break;
+                    case 4: activeBackground = ConsoleColor.Black; activeForeground = ConsoleColor.Cyan; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.DarkYellow; activeBack = ConsoleColor.Red; break;
+                    case 5: activeBackground = ConsoleColor.Black; activeForeground = ConsoleColor.DarkYellow; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Cyan; activeBack = ConsoleColor.Red; break;
+                    case 6: activeBackground = ConsoleColor.Black; activeForeground = ConsoleColor.DarkRed; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Cyan; activeBack = ConsoleColor.Blue; break;
+                    case 7: activeBackground = ConsoleColor.DarkYellow; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Blue; activeBack = ConsoleColor.Red; break;
+                    case 8: activeBackground = ConsoleColor.DarkBlue; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.Red; break;
+                    case 9: activeBackground = ConsoleColor.DarkGreen; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.Red; break;
+                    case 10: activeBackground = ConsoleColor.DarkYellow; activeForeground = ConsoleColor.Blue; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Cyan; activeBack = ConsoleColor.Red; break;
+                    case 11:
+                        
+                        belcPoint = 0;
+                        return;
+                }
+
+                // Azonnali alkalmazás, hogy látszódjon az eredmény
+                ApplyTheme();
+                
                 Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Magenta;
-                WriteCentered("--- Beállítások ---");
-                Console.ForegroundColor = ConsoleColor.White;
 
-                if (belcPoint == 0)
-                {
+            } while (true);
+        }
 
-                    Console.ForegroundColor = ConsoleColor.Green;
-                }
-                else
+        static void AlShowMenu2(int belcPoint)
+        {
+            ApplyTheme();
+            Console.Clear();
+            CurrentaltTitle();
+            WriteCentered("--- Téma ---");
+            Console.ForegroundColor = activeForeground;
+
+            // Segédfüggvény a lista kirajzoláshoz
+            void WriteThemeOption(string text, int index)
+            {
+                if (belcPoint == index) 
                 {
-                    Console.ForegroundColor = ConsoleColor.White;
+                    OptionColor();
                 }
-                WriteCentered("Téma");
-                if (belcPoint == 1)
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                WriteCentered("Szöveg elrendezés (kezdetleges)");
-                if (belcPoint == 2)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.White;
-                }
-                WriteCentered("Kilépés");
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine($"Jelenlegi Cpoint: {belcPoint}");
+                else Console.ForegroundColor = activeForeground;
+                WriteCentered(text);
             }
+
+            WriteThemeOption("Fekete háttér - Fehér szöveg (alap)", 0);
+            WriteThemeOption("Fehér háttér - Fekete szöveg", 1);
+            WriteThemeOption("Vörös háttér - Fehér szöveg", 2);
+            WriteThemeOption("Magenta háttér - Fehér szöveg", 3);
+            WriteThemeOption("Fekete háttér - Cyán szöveg", 4);
+            WriteThemeOption("Fekete háttér - Sárga szöveg", 5);
+            WriteThemeOption("Fekete háttér - Vörös szöveg", 6);
+            WriteThemeOption("Sárga háttér - Fehér szöveg", 7);
+            WriteThemeOption("Kék háttér - Fehér szöveg", 8);
+            WriteThemeOption("Zöld háttér - Fehér szöveg", 9);
+            WriteThemeOption("Sárga háttér - Kék szöveg", 10);
+
+            
+           
+            if (belcPoint == 11)
+            {
+                Console.ForegroundColor = activeBack;
+            }
+            else
+            {
+                Console.ForegroundColor = activeForeground;
+            }
+            WriteCentered("Vissza");
+
+            Console.ForegroundColor = activeForeground;
+            Console.WriteLine($"\nJelenlegi Cpoint: {belcPoint}");
         }
         #endregion
     }
