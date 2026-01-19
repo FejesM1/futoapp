@@ -1,19 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace futoapp.Models
 {
     internal class Futas
     {
-        DateTime datum;
-        int tav;
-        string idotart;
-        string maxpulz;
-        private static readonly List<Futas> Futasok = new List<Futas>();
+        // Adattagok
+        public DateTime Datum { get; set; }
+        public int Tav { get; set; }
+        public string Idotart { get; set; }
+        public string Maxpulz { get; set; }
+
+        // Statikus lista, ami a memóriában tárolja az adatokat
+        public static List<Futas> Futasok = new List<Futas>();
+        private static string fajlNev = "futasok.txt";
+
+        // Konstruktorok
+        public Futas() { }
 
         public Futas(DateTime datum, int tav, string idotart, string maxpulz)
         {
@@ -22,13 +27,6 @@ namespace futoapp.Models
             this.Idotart = idotart;
             this.Maxpulz = maxpulz;
         }
-
-        public DateTime Datum { get => datum; set => datum = value; }
-        public int Tav { get => tav; set => tav = value; }
-        public string Idotart { get => idotart; set => idotart = value; }
-        public string Maxpulz { get => maxpulz; set => maxpulz = value; }
-
-        public Futas() { }
 
         public Futas(string sor)
         {
@@ -39,31 +37,73 @@ namespace futoapp.Models
             Maxpulz = bontas[3];
         }
 
-        public static void Add(Futas f)
-        {
-            if (f == null) return;
-            Futasok.Add(f);
-        }
-
+        // CSV formázás fájlba íráshoz
         public string ToTxt()
         {
             return string.Format("{0:yyyy-MM-dd},{1},{2},{3}", Datum, Tav, Idotart, Maxpulz);
         }
 
-        static void Kiiras()
+        // Megjelenítéshez formázott string
+        public override string ToString()
         {
-
-            StreamWriter sw = new StreamWriter("futasok.txt", true, Encoding.UTF8);
-                sw.WriteLine("Datum,Tav,Idotart,Maxpulz");
-
-                foreach (var f in Futasok)
-                {
-                    sw.WriteLine(f.ToTxt());
-                }
-            
-
-            Console.WriteLine($"Fájl sikeresen kiírva");
+            return $"{Datum:yyyy-MM-dd} | {Tav}km | Idő: {Idotart} | Pulzus: {Maxpulz}";
         }
 
+        // --- FÁJLKEZELÉS ---
+
+        // 1. Új elem hozzáadása és mentés
+        public static void Hozzaad(Futas ujFutas)
+        {
+            Futasok.Add(ujFutas);
+            Mentes();
+        }
+
+        // 2. Fájl beolvasása (Program induláskor kell meghívni)
+        public static void Beolvasas()
+        {
+            Futasok.Clear();
+            if (File.Exists(fajlNev))
+            {
+                string[] sorok = File.ReadAllLines(fajlNev, Encoding.UTF8);
+                // Az első sor a fejléc, azt kihagyjuk (ciklus 1-től indul)
+                for (int i = 1; i < sorok.Length; i++)
+                {
+                    if (!string.IsNullOrWhiteSpace(sorok[i]))
+                    {
+                        Futasok.Add(new Futas(sorok[i]));
+                    }
+                }
+            }
+        }
+
+        // 3. Fájl mentése (Felülírás) - Törlés és Módosítás után is ezt hívjuk
+        public static void Mentes()
+        {
+            try
+            {
+                using (StreamWriter sw = new StreamWriter(fajlNev, false, Encoding.UTF8)) // false = felülírás
+                {
+                    sw.WriteLine("Datum,Tav,Idotart,Maxpulz"); // Fejléc
+                    foreach (var f in Futasok)
+                    {
+                        sw.WriteLine(f.ToTxt());
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hiba a mentés során: " + ex.Message);
+            }
+        }
+
+        // 4. Törlés index alapján
+        public static void Torles(int index)
+        {
+            if (index >= 0 && index < Futasok.Count)
+            {
+                Futasok.RemoveAt(index);
+                Mentes(); // Frissítjük a fájlt
+            }
+        }
     }
 }
