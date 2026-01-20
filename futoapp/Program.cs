@@ -143,8 +143,7 @@ namespace futoapp
             WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
             Console.ForegroundColor = activeForeground;
 
-            try
-            {
+            
                 WriteCenteredText("Dátum (éééé-hh-nn): ");
                 DateTime datum = DateTime.Parse(Console.ReadLine());
 
@@ -164,12 +163,7 @@ namespace futoapp
                 Console.WriteLine();
                 Console.ForegroundColor = ConsoleColor.Green;
                 WriteCentered("Sikeres mentés!");
-            }
-            catch (Exception)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                WriteCentered("Hibás adatmegadás! Próbáld újra.");
-            }
+            
         }
 
         static void FutasMenu()
@@ -223,6 +217,11 @@ namespace futoapp
                 var f = Futas.Futasok[i];
                 Console.WriteLine($"\t{i + 1}.      | {f.Datum:yyyy-MM-dd} | {f.Tav,-3} | {f.Idotart,-8} | {f.Maxpulz}");
             }
+            Console.WriteLine("\t" + new string('=', 50));
+            string osszIdoSzoveg = Futas.OsszesitettIdo();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.WriteLine($"\n\tÖsszes edzésidő: {osszIdoSzoveg}");
+            Console.ForegroundColor = activeForeground;
         }
 
         static void FutasModositas()
