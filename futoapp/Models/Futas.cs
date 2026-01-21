@@ -56,7 +56,8 @@ namespace futoapp.Models
         public static void Beolvasas()
         {
             Futasok.Clear();
-
+                
+                
                 string[] sorok = File.ReadAllLines("futasok.txt", Encoding.UTF8);
                 // Az első sor a fejléc, azt kihagyjuk (ciklus 1-től indul)
                 for (int i = 1; i < sorok.Length; i++)
@@ -73,7 +74,7 @@ namespace futoapp.Models
         {
                 using (StreamWriter sw = new StreamWriter("futasok.txt", true, Encoding.UTF8)) 
                 {
-                    sw.WriteLine("Datum,Tav,Idotart,Maxpulz");
+                    
                     foreach (var f in Futasok)
                     {
                         sw.WriteLine(f.ToTxt());

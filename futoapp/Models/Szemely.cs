@@ -41,7 +41,7 @@ namespace futoapp.Models
 
         public void KiirTxt(string szemely)
         {
-            File.AppendAllText(szemely, ToString() + Environment.NewLine);
+            File.WriteAllText(szemely, ToString() + Environment.NewLine);
         }
 
         public override string ToString()
