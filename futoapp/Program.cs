@@ -25,9 +25,9 @@ namespace futoapp
             // Ellenőrzés
             if (!File.Exists(utvonal))
             {
-                // Létrehozás és lezárás (hogy ne maradjon nyitva a fájl)
+                
                 File.Create(utvonal).Close();
-                Console.WriteLine("Fájl létrehozva.");
+                
             }
             else
             {

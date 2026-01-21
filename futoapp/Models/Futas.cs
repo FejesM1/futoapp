@@ -72,17 +72,20 @@ namespace futoapp.Models
 
         public static void Mentes()
         {
-            // A 'false' (vagy paraméter elhagyása) felülírja a fájlt, így nem lesz duplikáció.
+            // A 'false' azt jelenti, hogy felülírjuk a fájlt (tehát tiszta lappal indulunk)
             using (StreamWriter sw = new StreamWriter("futasok.txt", false, Encoding.UTF8))
             {
-                
+                // Kiírjuk a fejlécet
                 sw.WriteLine("Datum,Tav,Ido,Pulzus");
 
                 foreach (var f in Futasok)
                 {
-                    File.AppendAllText("futasok.txt", f.ToTxt());
+                    // HIBA VOLT: File.AppendAllText(...) -> Ez újra megnyitná a fájlt, ami tilos ilyenkor.
+
+                    // HELYES MEGOLDÁS: A már nyitott 'sw' változóval írunk bele:
+                    sw.WriteLine(f.ToTxt());
                 }
-            }
+            } // Itt a 'using' blokk vége automatikusan lezárja a fájlt (Close/Dispose)
         }
 
 
