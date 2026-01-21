@@ -80,7 +80,7 @@ namespace futoapp.Models
 
                 foreach (var f in Futasok)
                 {
-                    sw.WriteLine(f.ToTxt());
+                    File.AppendAllText("futasok.txt", f.ToTxt());
                 }
             }
         }

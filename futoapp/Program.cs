@@ -150,6 +150,30 @@ namespace futoapp
 
         }
 
+        public static void SzemelyAdatokMegjelenitese()
+        {
+            try
+            {
+                string[] sorok = System.IO.File.ReadAllLines("szemelyek.txt");
+                if (sorok.Length > 0)
+                {
+                    Szemely szemely = new Szemely(sorok[0]);
+                    Rendezes.WriteCentered($"Magasság: {szemely.Magassag} cm");
+                    Rendezes.WriteCentered($"Testtömeg: {szemely.Testtomeg} kg");
+                    Rendezes.WriteCentered($"Nyugalmi pulzus: {szemely.NyugalmiPulzus} bpm");
+                    Rendezes.WriteCentered($"Cél idő: {szemely.Cel:hh\\:mm\\:ss}");
+                }
+                else
+                {
+                    Rendezes.WriteCentered("Nincsenek személyes adatok.");
+                }
+            }
+            catch (Exception)
+            {
+                Rendezes.WriteCentered("Nincsenek személyes adatok.");
+            }
+        }
+
         #region EgyeniAdatFelvitel
         public static void Egyeniadatfelvitel()
         {
@@ -157,6 +181,7 @@ namespace futoapp
             CurrentTitle();
             Rendezes.WriteCentered("*** EGYÉNI ADAT FELVITELE/SZERKESZTÉSE ***\n");
 
+            SzemelyAdatokMegjelenitese();
             Console.ForegroundColor = activeForeground;
             Rendezes.WriteCenteredText("Magasság(cm): ");
             int magassag = int.Parse(Console.ReadLine());
