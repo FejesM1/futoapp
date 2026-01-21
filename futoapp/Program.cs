@@ -155,7 +155,7 @@ namespace futoapp
         {
             ApplyTheme(); // Színek biztosítása
             CurrentTitle();
-            Rendezes.WriteCentered("*** ÚJ EGYÉNI ADAT FELVITELE ***\n");
+            Rendezes.WriteCentered("*** EGYÉNI ADAT FELVITELE/SZERKESZTÉSE ***\n");
 
             Console.ForegroundColor = activeForeground;
             Rendezes.WriteCenteredText("Magasság(cm): ");

@@ -88,5 +88,6 @@ namespace futoapp.Models
             return osszTav;
         }
 
+
     }
 }
