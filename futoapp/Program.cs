@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using futoapp.Models;
+using futoapp.View;
 
 namespace futoapp
 {
@@ -18,6 +19,8 @@ namespace futoapp
         static ConsoleColor activeBack = ConsoleColor.Red;
         static void Main(string[] args)
         {
+            
+            Futas.Beolvasas();
             ApplyTheme(); //színek biztosítása
             Fomenu();
         }
@@ -79,36 +82,24 @@ namespace futoapp
                     case 0:  //Egyéniadat felvitele
                         Console.Clear();
                         Egyeniadatfelvitel();
-                        WriteCentered("Enterre tovább...");
+                        Rendezes.WriteCentered("Enterre tovább...");
                         Console.ReadLine();
                         break;
 
                     case 1: //Edzésiadat felvitele
                         Console.Clear();
                         FutasMenu();
-                        WriteCentered("Enterre tovább...");
-                        Console.ReadLine();
                         break;
 
-                    case 2: //Egyéniadat módosítása
-                        Console.Clear();
-
-
-                        WriteCentered("Enterre tovább...");
-                        Console.ReadLine();
-                        break;
-
-                    
-
-                    case 3: //Beállítások
+                    case 2: //Beállítások
                         Console.Clear();
                         Beallitasok();
 
                         break;
 
-                    case 4: // Kilépés
+                    case 3: // Kilépés
                         Console.Clear();
-                        WriteCentered("Biztosan kilép? (i/n): ");
+                        Rendezes.WriteCentered("Biztosan kilép? (i/n): ");
                         if (Console.ReadKey().Key == ConsoleKey.I)
                         {
                             Console.Clear();
@@ -133,7 +124,7 @@ namespace futoapp
             Console.Clear();
 
             CurrentTitle();
-            WriteCentered("*** Futó App ***");
+            Rendezes.WriteCentered("*** Futó App ***");
 
             Console.ForegroundColor = activeForeground;
 
@@ -142,7 +133,7 @@ namespace futoapp
             {
                 if (cPoint == index) OptionColor();
                 else Console.ForegroundColor = activeForeground;
-                WriteCentered(text);
+                Rendezes.WriteCentered(text);
             }
 
             WriteOption("Egyéni adatok", 0);
@@ -151,75 +142,40 @@ namespace futoapp
 
             if (cPoint == 2) Console.ForegroundColor = altTitle;
             else Console.ForegroundColor = activeForeground;
-            WriteCentered("Beállítások");
+            Rendezes.WriteCentered("Beállítások");
 
             if (cPoint == 3) Console.ForegroundColor = activeBack;
             else Console.ForegroundColor = activeForeground;
-            WriteCentered("Kilépés");
+            Rendezes.WriteCentered("Kilépés");
 
-            Console.ForegroundColor = activeForeground;
-            Console.WriteLine($"\nJelenlegi Cpoint: {cPoint}");
         }
-
-        #region Középrehelyezés
-        static void WriteCentered(string text)
-        {
-            string StripAnsi(string Rtext)
-            {
-                return System.Text.RegularExpressions.Regex.Replace(Rtext, @"\u001b\[[0-9;]*m", "");
-            }
-            string temptext = StripAnsi(text);
-
-            int width = Console.WindowWidth;
-            int leftPadding = (width - temptext.Length) / 2;
-            if (leftPadding < 0) leftPadding = 0;
-            Console.WriteLine(new string(' ', leftPadding) + text);
-        }
-        #endregion
-        #region Középrehelyezés Szöveg
-        static void WriteCenteredText(string text)
-        {
-            string StripAnsi(string Rtext)
-            {
-                return System.Text.RegularExpressions.Regex.Replace(Rtext, @"\u001b\[[0-9;]*m", "");
-            }
-            string temptext = StripAnsi(text);
-
-            int width = Console.WindowWidth;
-            int leftPadding = (width - temptext.Length) / 2 - 2;
-            if (leftPadding < 0) leftPadding = 0;
-            Console.Write(new string(' ', leftPadding) + text);
-        }
-        #endregion
 
         #region EgyeniAdatFelvitel
         public static void Egyeniadatfelvitel()
         {
             ApplyTheme(); // Színek biztosítása
             CurrentTitle();
-            WriteCentered("*** ÚJ EGYÉNI ADAT FELVITELE ***\n");
+            Rendezes.WriteCentered("*** ÚJ EGYÉNI ADAT FELVITELE ***\n");
 
             Console.ForegroundColor = activeForeground;
-            WriteCenteredText("Magasság(cm): ");
+            Rendezes.WriteCenteredText("Magasság(cm): ");
             int magassag = int.Parse(Console.ReadLine());
-            WriteCenteredText("Testtömeg(kg): ");
+            Rendezes.WriteCenteredText("Testtömeg(kg): ");
             int testtomeg = int.Parse(Console.ReadLine());
-            WriteCenteredText("Nyugalmi pulzus (csak a szám, pl: 60): ");
+            Rendezes.WriteCenteredText("Nyugalmi pulzus (csak a szám, pl: 60): ");
             int nyugpulz = int.Parse(Console.ReadLine());
-            WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
+            Rendezes.WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
             DateTime celido = DateTime.Parse(Console.ReadLine());
             Szemely ujSzemely = new Szemely(magassag, testtomeg, nyugpulz, celido);
 
-            // 3. A KiirTxt metódus meghívása
-            // Meg kell adni a fájl nevét paraméterként (pl. "szemelyek.txt")
             try
             {
                 ujSzemely.KiirTxt("szemelyek.txt");
-                WriteCentered("Sikeres mentés!");
+                Rendezes.WriteCentered("Sikeres mentés!");
             }
             catch (Exception ex)
             {
-                WriteCentered("\nHiba történt a mentéskor: " + ex.Message);
+                Rendezes.WriteCentered("\nHiba történt a mentéskor: " + ex.Message);
             }
         }
         #endregion
@@ -229,15 +185,15 @@ namespace futoapp
         {
             ApplyTheme();
             CurrentTitle();
-            WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
+            Rendezes.WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
             Console.ForegroundColor = activeForeground;
-            WriteCenteredText("Dátum (éé-hh-nn): ");
+            Rendezes.WriteCenteredText("Dátum (éé-hh-nn): ");
             DateTime datum = DateTime.Parse(Console.ReadLine());
-            WriteCenteredText("Távolság (km): ");
+            Rendezes.WriteCenteredText("Távolság (km): ");
             int tavolsag = int.Parse(Console.ReadLine());
-            WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
-            string ido = Console.ReadLine();
-            WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
+            Rendezes.WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
+            TimeSpan ido = TimeSpan.Parse(Console.ReadLine());
+            Rendezes.WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
             string maxpulz = Console.ReadLine();
 
             Futas ujEdzes = new Futas(datum, tavolsag, ido, maxpulz);
@@ -245,24 +201,13 @@ namespace futoapp
             try
             {
                 Futas.Hozzaad(ujEdzes);
-                WriteCentered("Sikeres mentés!");
+                Rendezes.WriteCentered("Sikeres mentés!");
             }
             catch (Exception ex)
             {
-                WriteCentered("\nHiba történt a mentéskor: " + ex.Message);
+                Rendezes.WriteCentered("\nHiba történt a mentéskor: " + ex.Message);
             }
             
-        }
-        #endregion
-        #region Középen beolvasás
-        static string ReadCentered(string prompt)
-        {
-            int width = Console.WindowWidth;
-            int leftPadding = (width - prompt.Length) / 2;
-            if (leftPadding < 0) leftPadding = 0;
-            Console.Write(new string(' ', leftPadding) + prompt);
-            // Kurzor pozíciójának beállítása.
-            return Console.ReadLine();
         }
         #endregion
         #region Beállítások
@@ -298,13 +243,7 @@ namespace futoapp
                         Tema();
                         break;
 
-                    case 1: //Szövegelrendezés
-                        Console.Clear();
-                        WriteCentered("Enterre tovább...");
-                        Console.ReadLine();
-                        break;
-
-                    case 2: // Kilépés a Főmenübe
+                    case 1:
 
                         return;
                 }
@@ -318,25 +257,16 @@ namespace futoapp
             ApplyTheme();
             Console.Clear();
             CurrentaltTitle();
-            WriteCentered("--- Beállítások ---");
+            Rendezes.WriteCentered("--- Beállítások ---");
             Console.ForegroundColor = activeForeground;
 
             if (belcPoint == 0) OptionColor();
             else Console.ForegroundColor = activeForeground;
-            WriteCentered("Téma");
+            Rendezes.WriteCentered("Téma");
 
-            if (belcPoint == 1) OptionColor();
+            if (belcPoint == 1) Console.ForegroundColor = activeBack;
             else Console.ForegroundColor = activeForeground;
-            WriteCentered("Szöveg elrendezés (kezdetleges)");
-
-
-
-            if (belcPoint == 2) Console.ForegroundColor = activeBack;
-            else Console.ForegroundColor = activeForeground;
-            WriteCentered("Vissza");
-
-            Console.ForegroundColor = activeForeground;
-            Console.WriteLine($"\nJelenlegi Cpoint: {belcPoint}");
+            Rendezes.WriteCentered("Vissza");
         }
 
         static void Tema()
@@ -395,7 +325,7 @@ namespace futoapp
             ApplyTheme();
             Console.Clear();
             CurrentaltTitle();
-            WriteCentered("--- Téma ---");
+            Rendezes.WriteCentered("--- Téma ---");
             Console.ForegroundColor = activeForeground;
 
             // Segédfüggvény a lista kirajzoláshoz
@@ -406,7 +336,7 @@ namespace futoapp
                     OptionColor();
                 }
                 else Console.ForegroundColor = activeForeground;
-                WriteCentered(text);
+                Rendezes.WriteCentered(text);
             }
 
             WriteThemeOption("Fekete háttér - Fehér szöveg (alap)", 0);
@@ -431,10 +361,9 @@ namespace futoapp
             {
                 Console.ForegroundColor = activeForeground;
             }
-            WriteCentered("Vissza");
+            Rendezes.WriteCentered("Vissza");
 
             Console.ForegroundColor = activeForeground;
-            Console.WriteLine($"\nJelenlegi Cpoint: {belcPoint}");
         }
         #endregion
         static void FutasMenu()
@@ -445,12 +374,20 @@ namespace futoapp
                 ApplyTheme();
                 Console.Clear();
                 CurrentTitle();
-                WriteCentered("*** FUTÁS ADATOK KEZELÉSE ***");
+                Rendezes.WriteCentered("*** FUTÁS ADATOK KEZELÉSE ***");
                 Console.ForegroundColor = activeForeground;
                 Console.WriteLine();
-                WriteCentered("1. Új adat felvitele");
-                WriteCentered("2. Adatok Módosítása / Törlése");
-                WriteCentered("3. Vissza a főmenübe");
+                ListaMegjelenites();
+                Console.WriteLine("\n");
+                if (Futas.Futasok.Count > 0)
+                {
+                    // Példa: az első személy adataival példányosítunk (vagy módosítsd, ha több személy van!)
+                    Szemely szemely = new Szemely(0, 0, 0, DateTime.Now); // Add meg a megfelelő paramétereket!
+                    szemely.HanyszorSikerultCelIdonBelul("futasok.txt");
+                }
+                Rendezes.WriteCentered("1. Új adat felvitele");
+                Rendezes.WriteCentered("2. Adatok Módosítása / Törlése");
+                Rendezes.WriteCentered("3. Vissza a főmenübe");
 
                 Console.Write("\n\tVálasztás: ");
                 string valasztas = Console.ReadLine();
@@ -475,24 +412,20 @@ namespace futoapp
         static void ListaMegjelenites()
         {
             // Listázás sorszámmal
-            if (Futas.Futasok.Count == 0)
-            {
-                WriteCentered("Nincs rögzített futás.");
-                return;
-            }
+            
 
-            Console.WriteLine("\n\tSorszám | Dátum      | Táv  | Idő      | Pulzus");
-            Console.WriteLine("\t" + new string('-', 50));
+            Rendezes.WriteCentered("Sorszám | Dátum      | Táv  | Idő      | Pulzus");
+            Rendezes.WriteCentered("" + new string('-', 50));
 
             for (int i = 0; i < Futas.Futasok.Count; i++)
             {
                 var f = Futas.Futasok[i];
-                Console.WriteLine($"\t{i + 1}.      | {f.Datum:yyyy-MM-dd} | {f.Tav,-3} | {f.Idotart,-8} | {f.Maxpulz}");
+                Rendezes.WriteCentered($"{i + 1}. | {f.Datum:yyyy-MM-dd} | {f.Tav,-3} | {f.Idotart,-8} | {f.Maxpulz}");
             }
-            Console.WriteLine("\t" + new string('=', 50));
+            Rendezes.WriteCentered("" + new string('=', 50));
             string osszIdoSzoveg = Futas.OsszesitettIdo();
             Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"\n\tÖsszes edzésidő: {osszIdoSzoveg}");
+            Rendezes.WriteCentered($"Összes edzésidő: {osszIdoSzoveg}");
             Console.ForegroundColor = activeForeground;
         }
 
@@ -501,7 +434,7 @@ namespace futoapp
             ApplyTheme();
             Console.Clear();
             CurrentTitle();
-            WriteCentered("*** FUTÁS ADATOK MÓDOSÍTÁSA / TÖRLÉSE ***");
+            Rendezes.WriteCentered("*** FUTÁS ADATOK MÓDOSÍTÁSA / TÖRLÉSE ***");
             Console.ForegroundColor = activeForeground;
 
             // 1. Listázzuk ki, hogy lássa mit választhat
@@ -528,12 +461,12 @@ namespace futoapp
                     // A felhasználó 1-től számol, a lista 0-tól, ezért kivonunk 1-et
                     Futas.Torles(sorszam - 1);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    WriteCentered("Sikeres törlés!");
+                    Rendezes.WriteCentered("Sikeres törlés!");
                     Console.ReadLine();
                 }
                 else
                 {
-                    WriteCentered("Érvénytelen sorszám!");
+                    Rendezes.WriteCentered("Érvénytelen sorszám!");
                     Console.ReadLine();
                 }
             }
@@ -560,7 +493,7 @@ namespace futoapp
                     // Idő
                     Console.Write($"\tÚj idő (Jelenlegi: {kivalasztott.Idotart}): ");
                     string ujIdo = Console.ReadLine();
-                    if (!string.IsNullOrWhiteSpace(ujIdo)) kivalasztott.Idotart = ujIdo;
+                    if (!string.IsNullOrWhiteSpace(ujIdo)) kivalasztott.Idotart = TimeSpan.Parse(ujIdo);
 
                     // Pulzus
                     Console.Write($"\tÚj pulzus (Jelenlegi: {kivalasztott.Maxpulz}): ");
@@ -570,12 +503,12 @@ namespace futoapp
                     // MENTÉS
                     Futas.Mentes();
                     Console.ForegroundColor = ConsoleColor.Green;
-                    WriteCentered("Sikeres módosítás!");
+                    Rendezes.WriteCentered("Sikeres módosítás!");
                     Console.ReadLine();
                 }
                 else
                 {
-                    WriteCentered("Érvénytelen sorszám!");
+                    Rendezes.WriteCentered("Érvénytelen sorszám!");
                     Console.ReadLine();
                 }
             }

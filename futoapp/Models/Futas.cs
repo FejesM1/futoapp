@@ -10,7 +10,7 @@ namespace futoapp.Models
         // Adattagok
         public DateTime Datum { get; set; }
         public int Tav { get; set; }
-        public string Idotart { get; set; }
+        public TimeSpan Idotart { get; set; }
         public string Maxpulz { get; set; }
 
         // Statikus lista, ami a memóriában tárolja az adatokat
@@ -20,7 +20,7 @@ namespace futoapp.Models
         // Konstruktorok
         public Futas() { }
 
-        public Futas(DateTime datum, int tav, string idotart, string maxpulz)
+        public Futas(DateTime datum, int tav, TimeSpan idotart, string maxpulz)
         {
             this.Datum = datum;
             this.Tav = tav;
@@ -33,7 +33,7 @@ namespace futoapp.Models
             string[] bontas = sor.Split(',');
             Datum = DateTime.Parse(bontas[0]);
             Tav = int.Parse(bontas[1]);
-            Idotart = bontas[2];
+            Idotart = TimeSpan.Parse(bontas[2]);
             Maxpulz = bontas[3];
         }
 
@@ -72,14 +72,17 @@ namespace futoapp.Models
 
         public static void Mentes()
         {
-                using (StreamWriter sw = new StreamWriter("futasok.txt", true, Encoding.UTF8)) 
+            // A 'false' (vagy paraméter elhagyása) felülírja a fájlt, így nem lesz duplikáció.
+            using (StreamWriter sw = new StreamWriter("futasok.txt", false, Encoding.UTF8))
+            {
+                
+                sw.WriteLine("Datum,Tav,Ido,Pulzus");
+
+                foreach (var f in Futasok)
                 {
-                    
-                    foreach (var f in Futasok)
-                    {
-                        sw.WriteLine(f.ToTxt());
-                    }
+                    sw.WriteLine(f.ToTxt());
                 }
+            }
         }
 
 
@@ -93,15 +96,13 @@ namespace futoapp.Models
         }
         public static string OsszesitettIdo()
         {
+            // A hibát okozó TimeSpan.TryParse hívás eltávolítva.
+            // Idotart már TimeSpan típusú, így közvetlenül összeadható.
             TimeSpan osszIdo = TimeSpan.Zero;
 
             foreach (var futas in Futasok)
             {
-
-                if (TimeSpan.TryParse(futas.Idotart, out TimeSpan aktualisIdo))
-                {
-                    osszIdo += aktualisIdo;
-                }
+                osszIdo += futas.Idotart;
             }
 
             return $"{osszIdo.Days} nap : {osszIdo.Hours} óra : {osszIdo.Minutes} perc : {osszIdo.Seconds} mp";

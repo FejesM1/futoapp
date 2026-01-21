@@ -1,4 +1,5 @@
-﻿using System;
+﻿using futoapp.View;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -49,57 +50,43 @@ namespace futoapp.Models
             return $"{Magassag},{Testtomeg},{NyugalmiPulzus},{Cel}";
         }
 
-        
 
-    public int HanyszorSikerultCelIdonBelul(string futasok)
+
+        public void HanyszorSikerultCelIdonBelul(string futasokFajlNev)
         {
             int db = 0;
-
-            string[] sorok = File.ReadAllLines(futasok);
-
-        
-            for (int i = 1; i < sorok.Length; i++)
+            foreach (var f in Futas.Futasok)
             {
-                Futas f = new Futas(sorok[i]);
+                TimeSpan futasIdo = f.Idotart;
+                double tavKm = (double)f.Tav;
 
-           
-                TimeSpan futasIdo = TimeSpan.Parse(f.Idotart);
-
-            
-                double tavKm = f.Tav / 1000.0;
-
-            
-                double atlagSebesseg = tavKm / futasIdo.TotalHours;
-
-            
-                TimeSpan ido5Km = TimeSpan.FromHours(5.0 / atlagSebesseg);
-
-            
-                if (ido5Km <= Cel.TimeOfDay)
+                if (futasIdo.TotalHours > 0 && tavKm > 0)
                 {
-                    db++;
+                    double atlagSebesseg = tavKm / futasIdo.TotalHours;
+
+                    TimeSpan ido5Km = TimeSpan.FromHours(5.0 / atlagSebesseg);
+
+                    if (ido5Km <= Cel.TimeOfDay)
+                    {
+                        db++;
+                    }
                 }
             }
 
-            return db;
+            Rendezes.WriteCentered($"{db} alkalommal sikerült a célt elérni.\n");
         }
 
-      
 
-    public int OsszTav(string futasok)
+
+        public int OsszTav(string futasok)
         {
             int osszTav = 0;
-
-            string[] sorok = File.ReadAllLines(futasok);
-
-            for (int i = 1; i < sorok.Length; i++)
+            foreach (var f in Futas.Futasok)
             {
-                Futas f = new Futas(sorok[i]);
                 osszTav += f.Tav;
             }
-
             return osszTav;
         }
 
-}
+    }
 }
