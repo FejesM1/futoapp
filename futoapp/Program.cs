@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using futoapp.Models;
 using futoapp.View;
+using System.IO;
 
 namespace futoapp
 {
@@ -19,7 +20,19 @@ namespace futoapp
         static ConsoleColor activeBack = ConsoleColor.Red;
         static void Main(string[] args)
         {
-            
+            string utvonal = "futasok.txt";
+
+            // Ellenőrzés
+            if (!File.Exists(utvonal))
+            {
+                // Létrehozás és lezárás (hogy ne maradjon nyitva a fájl)
+                File.Create(utvonal).Close();
+                Console.WriteLine("Fájl létrehozva.");
+            }
+            else
+            {
+                Console.WriteLine("Már létezik.");
+            }
             Futas.Beolvasas();
             ApplyTheme(); //színek biztosítása
             Fomenu();
@@ -79,11 +92,28 @@ namespace futoapp
 
                 switch (cPoint)
                 {
-                    case 0:  //Egyéniadat felvitele
+                    case 0:  // Egyéniadat menü
                         Console.Clear();
-                        Egyeniadatfelvitel();
-                        Rendezes.WriteCentered("Enterre tovább...");
-                        Console.ReadLine();
+                        ApplyTheme();
+                        Rendezes.WriteCentered("*** SZEMÉLYES ADATOK KEZELÉSE ***\n");
+                        Rendezes.WriteCentered("1. Új mérés rögzítése / Adatok frissítése");
+                        Rendezes.WriteCentered("2. Előzmények (súly/pulzus változás) megtekintése");
+                        Rendezes.WriteCentered("3. Vissza");
+
+                        Console.Write("\n\tVálasztás: ");
+                        char subValasztas = Console.ReadKey().KeyChar;
+
+                        if (subValasztas == '1')
+                        {
+                            Console.Clear();
+                            Egyeniadatfelvitel();
+                            Rendezes.WriteCentered("Enterre tovább...");
+                            Console.ReadLine();
+                        }
+                        else if (subValasztas == '2')
+                        {
+                            ElozmenyekMegtekintese();
+                        }
                         break;
 
                     case 1: //Edzésiadat felvitele
@@ -150,18 +180,62 @@ namespace futoapp
 
         }
 
+        public static void ElozmenyekMegtekintese()
+        {
+            Console.Clear();
+            ApplyTheme();
+            CurrentTitle();
+            Rendezes.WriteCentered("*** TESTTÖMEG ÉS PULZUS VÁLTOZÁSA ***\n");
+            Console.ForegroundColor = activeForeground;
+
+            if (!File.Exists("szemelyek.txt"))
+            {
+                Rendezes.WriteCentered("Még nincsenek rögzített adatok.");
+                return;
+            }
+
+            string[] sorok = File.ReadAllLines("szemelyek.txt");
+
+            // Fejléc
+            Rendezes.WriteCentered("Dátum       | Súly (kg) | Pulzus (bpm)");
+            Rendezes.WriteCentered("--------------------------------------");
+
+            foreach (string sor in sorok)
+            {
+                if (!string.IsNullOrWhiteSpace(sor))
+                {
+                    try
+                    {
+                        Szemely sz = new Szemely(sor);
+                        // Formázott kiírás
+                        Rendezes.WriteCentered($"{sz.RogzitesIdeje:yyyy-MM-dd}  | {sz.Testtomeg,-9} | {sz.NyugalmiPulzus}");
+                    }
+                    catch
+                    {
+                        // Ha véletlenül rossz sor van, átugorjuk
+                    }
+                }
+            }
+            Console.WriteLine();
+            Rendezes.WriteCentered("Nyomj Entert a visszalépéshez...");
+            Console.ReadLine();
+        }
         public static void SzemelyAdatokMegjelenitese()
         {
             try
             {
-                string[] sorok = System.IO.File.ReadAllLines("szemelyek.txt");
+                string[] sorok = File.ReadAllLines("szemelyek.txt");
                 if (sorok.Length > 0)
                 {
-                    Szemely szemely = new Szemely(sorok[0]);
+                    // FONTOS: Az utolsó sort vesszük ki, mert az a legfrissebb állapot!
+                    Szemely szemely = new Szemely(sorok[sorok.Length - 1]);
+
+                    Rendezes.WriteCentered($"--- Jelenlegi állapot ({szemely.RogzitesIdeje:yyyy-MM-dd}) ---");
                     Rendezes.WriteCentered($"Magasság: {szemely.Magassag} cm");
                     Rendezes.WriteCentered($"Testtömeg: {szemely.Testtomeg} kg");
                     Rendezes.WriteCentered($"Nyugalmi pulzus: {szemely.NyugalmiPulzus} bpm");
                     Rendezes.WriteCentered($"Cél idő: {szemely.Cel:hh\\:mm\\:ss}");
+                    Rendezes.WriteCentered("-----------------------------");
                 }
                 else
                 {
@@ -170,7 +244,7 @@ namespace futoapp
             }
             catch (Exception)
             {
-                Rendezes.WriteCentered("Nincsenek személyes adatok.");
+                Rendezes.WriteCentered("Hiba az adatok olvasásakor vagy nincsenek adatok.");
             }
         }
 

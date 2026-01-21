@@ -3,14 +3,14 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace futoapp.Models
 {
     internal class Szemely
     {
+        // Új mező: mikor rögzítettük az adatot?
+        public DateTime RogzitesIdeje { get; set; }
+
         int magassag;
         int testtomeg;
         int nyugalmiPulzus;
@@ -21,8 +21,10 @@ namespace futoapp.Models
         public int NyugalmiPulzus { get { return nyugalmiPulzus; } set { nyugalmiPulzus = value; } }
         public DateTime Cel { get { return cel; } set { cel = value; } }
 
+        // Konstruktor az új adat felviteléhez (mostmár dátummal)
         public Szemely(int magassag, int testtomeg, int nyugalmiPulzus, DateTime cel)
         {
+            this.RogzitesIdeje = DateTime.Now; // Automatikusan a mostani időt kapja
             this.Magassag = magassag;
             this.Testtomeg = testtomeg;
             this.NyugalmiPulzus = nyugalmiPulzus;
@@ -31,27 +33,40 @@ namespace futoapp.Models
 
         public Szemely() { }
 
+        // Konstruktor beolvasáshoz (bővítve a dátummal)
         public Szemely(string sor)
         {
             string[] bontas = sor.Split(',');
+            // Feltételezzük, hogy az 5. elem a dátum, ha nincs, akkor "Most"
+            if (bontas.Length > 4)
+            {
+                RogzitesIdeje = DateTime.Parse(bontas[4]);
+            }
+            else
+            {
+                RogzitesIdeje = DateTime.Now;
+            }
+
             Magassag = int.Parse(bontas[0]);
             Testtomeg = int.Parse(bontas[1]);
             NyugalmiPulzus = int.Parse(bontas[2]);
             Cel = DateTime.Parse(bontas[3]);
         }
 
-        public void KiirTxt(string szemely)
+        // Módosítva: Hozzáfűzés (Append) a felülírás helyett
+        public void KiirTxt(string fajlnev)
         {
-            File.WriteAllText(szemely, ToString() + Environment.NewLine);
+            // Ha nem létezik a fájl, létrehozzuk, ha létezik, végére írunk
+            File.AppendAllText(fajlnev, ToString() + Environment.NewLine);
         }
 
         public override string ToString()
         {
-            return $"{Magassag},{Testtomeg},{NyugalmiPulzus},{Cel}";
+            // Hozzáadtuk a dátumot a végére
+            return $"{Magassag},{Testtomeg},{NyugalmiPulzus},{Cel},{RogzitesIdeje}";
         }
 
-
-
+        // ... A többi metódusod (HanyszorSikerultCelIdonBelul, OsszTav) maradhat változatlan ...
         public void HanyszorSikerultCelIdonBelul(string futasokFajlNev)
         {
             int db = 0;
@@ -63,7 +78,6 @@ namespace futoapp.Models
                 if (futasIdo.TotalHours > 0 && tavKm > 0)
                 {
                     double atlagSebesseg = tavKm / futasIdo.TotalHours;
-
                     TimeSpan ido5Km = TimeSpan.FromHours(5.0 / atlagSebesseg);
 
                     if (ido5Km <= Cel.TimeOfDay)
@@ -72,22 +86,7 @@ namespace futoapp.Models
                     }
                 }
             }
-
             Rendezes.WriteCentered($"{db} alkalommal sikerült a célt elérni.\n");
         }
-
-
-
-        public int OsszTav(string futasok)
-        {
-            int osszTav = 0;
-            foreach (var f in Futas.Futasok)
-            {
-                osszTav += f.Tav;
-            }
-            return osszTav;
-        }
-
-
     }
 }
