@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using futoapp.Models;
 using futoapp.View;
 using System.IO;
+using futoapp.Controllers;
 
 namespace futoapp
 {
@@ -123,7 +124,7 @@ namespace futoapp
 
                     case 2: //Beállítások
                         Console.Clear();
-                        Beallitasok();
+                        Kontroller.Beallitasok();
 
                         break;
 
@@ -248,109 +249,17 @@ namespace futoapp
             }
         }
 
-        #region EgyeniAdatFelvitel
-        public static void Egyeniadatfelvitel()
-        {
-            ApplyTheme(); // Színek biztosítása
-            CurrentTitle();
-            Rendezes.WriteCentered("*** EGYÉNI ADAT FELVITELE/SZERKESZTÉSE ***\n");
-
-            SzemelyAdatokMegjelenitese();
-            Console.ForegroundColor = activeForeground;
-            Rendezes.WriteCenteredText("Magasság(cm): ");
-            int magassag = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Testtömeg(kg): ");
-            int testtomeg = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Nyugalmi pulzus (csak a szám, pl: 60): ");
-            int nyugpulz = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
-            DateTime celido = DateTime.Parse(Console.ReadLine());
-            Szemely ujSzemely = new Szemely(magassag, testtomeg, nyugpulz, celido);
-
-            try
-            {
-                ujSzemely.KiirTxt("szemelyek.txt");
-                Rendezes.WriteCentered("Sikeres mentés!");
-            }
-            catch (Exception ex)
-            {
-                Rendezes.WriteCentered("\nHiba történt a mentéskor: " + ex.Message);
-            }
-        }
-        #endregion
+        
 
         # region EdzésiAdatfelvitel
-        public static void Edzesiadatfelvitel()
-        {
-            ApplyTheme();
-            CurrentTitle();
-            Rendezes.WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
-            Console.ForegroundColor = activeForeground;
-            Rendezes.WriteCenteredText("Dátum (éé-hh-nn): ");
-            DateTime datum = DateTime.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Távolság (km): ");
-            int tavolsag = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
-            TimeSpan ido = TimeSpan.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
-            string maxpulz = Console.ReadLine();
-
-            Futas ujEdzes = new Futas(datum, tavolsag, ido, maxpulz);
-
-            try
-            {
-                Futas.Hozzaad(ujEdzes);
-                Rendezes.WriteCentered("Sikeres mentés!");
-            }
-            catch (Exception ex)
-            {
-                Rendezes.WriteCentered("\nHiba történt a mentéskor: " + ex.Message);
-            }
-            
-        }
+        
         #endregion
         #region Beállítások
-        static int belcPoint = 0;
+        
 
-        public static void Beallitasok()
-        {
-            belcPoint = 0;
-            do
-            {
-                bool selected = false;
-                do
-                {
-                    AlShowMenu(belcPoint);
-                    switch (Console.ReadKey(true).Key)
-                    {
-                        case ConsoleKey.Enter:
-                            selected = true;
-                            break;
-                        case ConsoleKey.UpArrow:
-                            if (belcPoint > 0) belcPoint -= 1;
-                            break;
-                        case ConsoleKey.DownArrow:
-                            if (belcPoint < 2) belcPoint += 1;
-                            break;
-                    }
-                } while (!selected);
+       
 
-                switch (belcPoint)
-                {
-                    case 0:  //Téma
-                        Console.Clear();
-                        Tema();
-                        break;
-
-                    case 1:
-
-                        return;
-                }
-
-            } while (true);
-        }
-
-        static void AlShowMenu(int belcPoint)
+        public static void AlShowMenu(int belcPoint)
         {
 
             ApplyTheme();
@@ -368,9 +277,9 @@ namespace futoapp
             Rendezes.WriteCentered("Vissza");
         }
 
-        static void Tema()
+        public static void Tema()
         {
-            belcPoint = 0;
+            int belcPoint = 0;
             do
             {
                 bool selected = false;
