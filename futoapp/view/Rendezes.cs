@@ -7,6 +7,7 @@ using System.Runtime.ConstrainedExecution;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
+using futoapp.Controllers;
 
 namespace futoapp.View
 {
@@ -72,7 +73,7 @@ namespace futoapp.View
 
                     case 1: //Edzésiadat felvitele
                         Console.Clear();
-                        Program.FutasMenu();
+                        Kontroller.FutasMenu();
                         break;
 
                     case 2: //Beállítások

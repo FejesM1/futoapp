@@ -20,7 +20,7 @@ namespace futoapp.Controllers
                 bool selected = false;
                 do
                 {
-                    Program.AlShowMenu(belcPoint);
+                    Rendezes.AlShowMenu(belcPoint);
                     switch (Console.ReadKey(true).Key)
                     {
                         case ConsoleKey.Enter:
@@ -39,7 +39,7 @@ namespace futoapp.Controllers
                 {
                     case 0:  //Téma
                         Console.Clear();
-                        Program.Tema();
+                        Rendezes.Tema();
                         break;
 
                     case 1:
@@ -58,7 +58,7 @@ namespace futoapp.Controllers
             Rendezes.CurrentTitle();
             Rendezes.WriteCentered("*** EGYÉNI ADAT FELVITELE/SZERKESZTÉSE ***\n");
 
-            Program.SzemelyAdatokMegjelenitese();
+            Rendezes.SzemelyAdatokMegjelenitese();
             Console.ForegroundColor = Rendezes.activeForeground;
             Rendezes.WriteCenteredText("Magasság(cm): ");
             int magassag = int.Parse(Console.ReadLine());
@@ -123,7 +123,7 @@ namespace futoapp.Controllers
             Console.ForegroundColor = Rendezes.activeForeground;
 
             // 1. Listázzuk ki, hogy lássa mit választhat
-            Program.ListaMegjelenites();
+            Rendezes.ListaMegjelenites();
 
             if (Futas.Futasok.Count == 0)
             {
@@ -201,7 +201,7 @@ namespace futoapp.Controllers
         #endregion
 
         #region futasmenu
-        static void FutasMenu()
+        public static void FutasMenu()
         {
             // Egyszerű almenü
             while (true)
