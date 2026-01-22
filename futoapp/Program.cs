@@ -407,48 +407,7 @@ namespace futoapp
             Console.ForegroundColor = Rendezes.activeForeground;
         }
         #endregion
-        static void FutasMenu()
-        {
-            // Egyszerű almenü
-            while (true)
-            {
-                Rendezes.ApplyTheme();
-                Console.Clear();
-                Rendezes.CurrentTitle();
-                Rendezes.WriteCentered("*** FUTÁS ADATOK KEZELÉSE ***");
-                Console.ForegroundColor = Rendezes.activeForeground;
-                Console.WriteLine();
-                ListaMegjelenites();
-                Console.WriteLine("\n");
-                if (Futas.Futasok.Count > 0)
-                {
-                    // Példa: az első személy adataival példányosítunk (vagy módosítsd, ha több személy van!)
-                    Szemely szemely = new Szemely(0, 0, 0, DateTime.Now); // Add meg a megfelelő paramétereket!
-                    szemely.HanyszorSikerultCelIdonBelul("futasok.txt");
-                }
-                Rendezes.WriteCentered("1. Új adat felvitele");
-                Rendezes.WriteCentered("2. Adatok Módosítása / Törlése");
-                Rendezes.WriteCentered("3. Vissza a főmenübe");
-
-                Console.Write("\n\tVálasztás: ");
-                string valasztas = Console.ReadLine();
-
-                if (valasztas == "1")
-                {
-                    Console.Clear();
-                    Kontroller.Edzesiadatfelvitel();
-                    Console.ReadLine();
-                }
-                else if (valasztas == "2")
-                {
-                    Kontroller.FutasModositas();
-                }
-                else if (valasztas == "3")
-                {
-                    return;
-                }
-            }
-        }
+        
 
         public static void ListaMegjelenites()
         {
