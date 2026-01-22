@@ -97,17 +97,26 @@ namespace futoapp.Controllers
             Rendezes.CurrentTitle();
             Rendezes.WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
             Console.ForegroundColor = Rendezes.activeForeground;
-            Rendezes.WriteCenteredText("Dátum (éé-hh-nn): ");
-            DateTime datum = DateTime.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Távolság (km): ");
-            int tavolsag = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
-            TimeSpan ido = TimeSpan.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
-            string maxpulz = Console.ReadLine();
+            Futas ujEdzes = null;
+            try
+            {
+                Rendezes.WriteCenteredText("Dátum (éé-hh-nn): ");
+                DateTime datum = DateTime.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Távolság (km): ");
+                int tavolsag = int.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
+                TimeSpan ido = TimeSpan.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
+                string maxpulz = Console.ReadLine();
 
-            Futas ujEdzes = new Futas(datum, tavolsag, ido, maxpulz);
 
+                ujEdzes = new Futas(datum, tavolsag, ido, maxpulz);
+            }
+            catch (Exception ex)
+            {
+                Rendezes.WriteCentered($"\nHibás adatbevitel! Hiba: {ex.Message}");
+                return;
+            }
             try
             {
                 Futas.Hozzaad(ujEdzes);
