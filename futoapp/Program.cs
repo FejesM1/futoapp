@@ -14,11 +14,7 @@ namespace futoapp
     {
         static int cPoint = 0;
 
-        static ConsoleColor activeBackground = ConsoleColor.Black;
-        static ConsoleColor activeForeground = ConsoleColor.White;
-        static ConsoleColor altTitle = ConsoleColor.Magenta;
-        static ConsoleColor activeTitle = ConsoleColor.Yellow;
-        static ConsoleColor activeBack = ConsoleColor.Red;
+        
         static void Main(string[] args)
         {
             string utvonal = "futasok.txt";
@@ -35,39 +31,10 @@ namespace futoapp
                 Console.WriteLine("Már létezik.");
             }
             Futas.Beolvasas();
-            ApplyTheme(); //színek biztosítása
+            Rendezes.ApplyTheme(); //színek biztosítása
             Fomenu();
         }
-        #region Téma színek
-        static void ApplyTheme()
-        {
-            Console.BackgroundColor = activeBackground;
-            Console.ForegroundColor = activeForeground;
-        }
-        #endregion
-        #region Alcím
-        static void CurrentaltTitle()
-        {
-            Console.ForegroundColor = altTitle;
-        }
-        #endregion
-        #region Cím
-        static void CurrentTitle()
-        {
-            Console.ForegroundColor = activeTitle;
-        }
-        #endregion
-        #region Jelenlegi választás
-        static void OptionColor()
-        {
-            if (activeBackground == ConsoleColor.DarkGreen)
-            {
-                Console.ForegroundColor = ConsoleColor.Blue;
-            }
-            else
-                Console.ForegroundColor = ConsoleColor.Green;
-        }
-        #endregion
+        
         static void Fomenu()
         {
             cPoint = 0;
@@ -95,7 +62,7 @@ namespace futoapp
                 {
                     case 0:  // Egyéniadat menü
                         Console.Clear();
-                        ApplyTheme();
+                        Rendezes.ApplyTheme();
                         Rendezes.WriteCentered("*** SZEMÉLYES ADATOK KEZELÉSE ***\n");
                         Rendezes.WriteCentered("1. Új mérés rögzítése / Adatok frissítése");
                         Rendezes.WriteCentered("2. Előzmények (súly/pulzus változás) megtekintése");
@@ -150,20 +117,20 @@ namespace futoapp
         static void ShowMenu1(int cPoint)
         {
 
-            ApplyTheme();
+            Rendezes.ApplyTheme();
 
             Console.Clear();
 
-            CurrentTitle();
+            Rendezes.CurrentTitle();
             Rendezes.WriteCentered("*** Futó App ***");
 
-            Console.ForegroundColor = activeForeground;
+            Console.ForegroundColor = Rendezes.activeForeground;
 
 
             void WriteOption(string text, int index)
             {
-                if (cPoint == index) OptionColor();
-                else Console.ForegroundColor = activeForeground;
+                if (cPoint == index) Rendezes.OptionColor();
+                else Console.ForegroundColor = Rendezes.activeForeground;
                 Rendezes.WriteCentered(text);
             }
 
@@ -171,12 +138,12 @@ namespace futoapp
             WriteOption("Edzési adatok", 1);
 
 
-            if (cPoint == 2) Console.ForegroundColor = altTitle;
-            else Console.ForegroundColor = activeForeground;
+            if (cPoint == 2) Console.ForegroundColor = Rendezes.altTitle;
+            else Console.ForegroundColor = Rendezes.activeForeground;
             Rendezes.WriteCentered("Beállítások");
 
-            if (cPoint == 3) Console.ForegroundColor = activeBack;
-            else Console.ForegroundColor = activeForeground;
+            if (cPoint == 3) Console.ForegroundColor = Rendezes.activeBack;
+            else Console.ForegroundColor = Rendezes.activeForeground;
             Rendezes.WriteCentered("Kilépés");
 
         }
@@ -184,10 +151,10 @@ namespace futoapp
         public static void ElozmenyekMegtekintese()
         {
             Console.Clear();
-            ApplyTheme();
-            CurrentTitle();
+            Rendezes.ApplyTheme();
+            Rendezes.CurrentTitle();
             Rendezes.WriteCentered("*** TESTTÖMEG ÉS PULZUS VÁLTOZÁSA ***\n");
-            Console.ForegroundColor = activeForeground;
+            Console.ForegroundColor = Rendezes.activeForeground;
 
             if (!File.Exists("szemelyek.txt"))
             {
@@ -262,18 +229,18 @@ namespace futoapp
         public static void AlShowMenu(int belcPoint)
         {
 
-            ApplyTheme();
+            Rendezes.ApplyTheme();
             Console.Clear();
-            CurrentaltTitle();
+            Rendezes.CurrentaltTitle();
             Rendezes.WriteCentered("--- Beállítások ---");
-            Console.ForegroundColor = activeForeground;
+            Console.ForegroundColor = Rendezes.activeForeground;
 
-            if (belcPoint == 0) OptionColor();
-            else Console.ForegroundColor = activeForeground;
+            if (belcPoint == 0) Rendezes.OptionColor();
+            else Console.ForegroundColor = Rendezes.activeForeground;
             Rendezes.WriteCentered("Téma");
 
-            if (belcPoint == 1) Console.ForegroundColor = activeBack;
-            else Console.ForegroundColor = activeForeground;
+            if (belcPoint == 1) Console.ForegroundColor = Rendezes.activeBack;
+            else Console.ForegroundColor = Rendezes.activeForeground;
             Rendezes.WriteCentered("Vissza");
         }
 
@@ -303,17 +270,83 @@ namespace futoapp
 
                 switch (belcPoint)
                 {
-                    case 0: activeBackground = ConsoleColor.Black; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.Red; break;
-                    case 1: activeBackground = ConsoleColor.White; activeForeground = ConsoleColor.Black; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.DarkYellow; activeBack = ConsoleColor.Red; break;
-                    case 2: activeBackground = ConsoleColor.DarkRed; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Blue; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.Blue; break;
-                    case 3: activeBackground = ConsoleColor.DarkMagenta; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Black; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.DarkYellow; break;
-                    case 4: activeBackground = ConsoleColor.Black; activeForeground = ConsoleColor.Cyan; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.DarkYellow; activeBack = ConsoleColor.Red; break;
-                    case 5: activeBackground = ConsoleColor.Black; activeForeground = ConsoleColor.DarkYellow; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Cyan; activeBack = ConsoleColor.Red; break;
-                    case 6: activeBackground = ConsoleColor.Black; activeForeground = ConsoleColor.DarkRed; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Cyan; activeBack = ConsoleColor.Blue; break;
-                    case 7: activeBackground = ConsoleColor.DarkYellow; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Blue; activeBack = ConsoleColor.Red; break;
-                    case 8: activeBackground = ConsoleColor.DarkBlue; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.Red; break;
-                    case 9: activeBackground = ConsoleColor.DarkGreen; activeForeground = ConsoleColor.White; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Yellow; activeBack = ConsoleColor.Red; break;
-                    case 10: activeBackground = ConsoleColor.DarkYellow; activeForeground = ConsoleColor.Blue; altTitle = ConsoleColor.Magenta; activeTitle = ConsoleColor.Cyan; activeBack = ConsoleColor.Red; break;
+                    case 0: Rendezes.activeBackground = ConsoleColor.Black; 
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 1: Rendezes.activeBackground = ConsoleColor.White;
+                        Rendezes.activeForeground = ConsoleColor.Black;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.DarkYellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 2: Rendezes.activeBackground = ConsoleColor.DarkRed;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Blue;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.Blue;
+                        break;
+
+                    case 3: Rendezes.activeBackground = ConsoleColor.DarkMagenta;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Black;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.DarkYellow;
+                        break;
+
+                    case 4: Rendezes.activeBackground = ConsoleColor.Black;
+                        Rendezes.activeForeground = ConsoleColor.Cyan;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.DarkYellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 5: Rendezes.activeBackground = ConsoleColor.Black;
+                        Rendezes.activeForeground = ConsoleColor.DarkYellow;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Cyan;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 6: Rendezes.activeBackground = ConsoleColor.Black;
+                        Rendezes.activeForeground = ConsoleColor.DarkRed;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Cyan;
+                        Rendezes.activeBack = ConsoleColor.Blue;
+                        break;
+
+                    case 7: Rendezes.activeBackground = ConsoleColor.DarkYellow;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Blue;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 8: Rendezes.activeBackground = ConsoleColor.DarkBlue;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 9: Rendezes.activeBackground = ConsoleColor.DarkGreen;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 10: Rendezes.activeBackground = ConsoleColor.DarkYellow;
+                        Rendezes.activeForeground = ConsoleColor.Blue;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Cyan;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
                     case 11:
 
                         belcPoint = 0;
@@ -321,7 +354,7 @@ namespace futoapp
                 }
 
                 // Azonnali alkalmazás, hogy látszódjon az eredmény
-                ApplyTheme();
+                Rendezes.ApplyTheme();
 
                 Console.Clear();
 
@@ -330,20 +363,20 @@ namespace futoapp
 
         static void AlShowMenu2(int belcPoint)
         {
-            ApplyTheme();
+            Rendezes.ApplyTheme();
             Console.Clear();
-            CurrentaltTitle();
+            Rendezes.CurrentaltTitle();
             Rendezes.WriteCentered("--- Téma ---");
-            Console.ForegroundColor = activeForeground;
+            Console.ForegroundColor = Rendezes.activeForeground;
 
             // Segédfüggvény a lista kirajzoláshoz
             void WriteThemeOption(string text, int index)
             {
                 if (belcPoint == index)
                 {
-                    OptionColor();
+                    Rendezes.OptionColor();
                 }
-                else Console.ForegroundColor = activeForeground;
+                else Console.ForegroundColor = Rendezes.activeForeground;
                 Rendezes.WriteCentered(text);
             }
 
@@ -363,15 +396,15 @@ namespace futoapp
 
             if (belcPoint == 11)
             {
-                Console.ForegroundColor = activeBack;
+                Console.ForegroundColor = Rendezes.activeBack;
             }
             else
             {
-                Console.ForegroundColor = activeForeground;
+                Console.ForegroundColor = Rendezes.activeForeground;
             }
             Rendezes.WriteCentered("Vissza");
 
-            Console.ForegroundColor = activeForeground;
+            Console.ForegroundColor = Rendezes.activeForeground;
         }
         #endregion
         static void FutasMenu()
@@ -379,11 +412,11 @@ namespace futoapp
             // Egyszerű almenü
             while (true)
             {
-                ApplyTheme();
+                Rendezes.ApplyTheme();
                 Console.Clear();
-                CurrentTitle();
+                Rendezes.CurrentTitle();
                 Rendezes.WriteCentered("*** FUTÁS ADATOK KEZELÉSE ***");
-                Console.ForegroundColor = activeForeground;
+                Console.ForegroundColor = Rendezes.activeForeground;
                 Console.WriteLine();
                 ListaMegjelenites();
                 Console.WriteLine("\n");
@@ -434,16 +467,16 @@ namespace futoapp
             string osszIdoSzoveg = Futas.OsszesitettIdo();
             Console.ForegroundColor = ConsoleColor.Cyan;
             Rendezes.WriteCentered($"Összes edzésidő: {osszIdoSzoveg}");
-            Console.ForegroundColor = activeForeground;
+            Console.ForegroundColor = Rendezes.activeForeground;
         }
 
         static void FutasModositas()
         {
-            ApplyTheme();
+            Rendezes.ApplyTheme();
             Console.Clear();
-            CurrentTitle();
+            Rendezes.CurrentTitle();
             Rendezes.WriteCentered("*** FUTÁS ADATOK MÓDOSÍTÁSA / TÖRLÉSE ***");
-            Console.ForegroundColor = activeForeground;
+            Console.ForegroundColor = Rendezes.activeForeground;
 
             // 1. Listázzuk ki, hogy lássa mit választhat
             ListaMegjelenites();
