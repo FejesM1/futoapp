@@ -11,6 +11,7 @@ namespace futoapp.Controllers
 {
     internal class Kontroller
     {
+        #region beallitasok
         public static void Beallitasok()
         {
             int belcPoint = 0;
@@ -48,7 +49,9 @@ namespace futoapp.Controllers
 
             } while (true);
         }
+        #endregion
 
+        #region egyeniadatfelvitel
         public static void Egyeniadatfelvitel()
         {
             Rendezes.ApplyTheme(); // Színek biztosítása
@@ -77,7 +80,9 @@ namespace futoapp.Controllers
                 Rendezes.WriteCentered("\nHiba történt a mentéskor: " + ex.Message);
             }
         }
+        #endregion
 
+        #region edzesiadatfelvitel
         public static void Edzesiadatfelvitel()
         {
             Rendezes.ApplyTheme();
@@ -106,5 +111,93 @@ namespace futoapp.Controllers
             }
 
         }
+        #endregion
+
+        #region futasmodositas
+        public static void FutasModositas()
+        {
+            Rendezes.ApplyTheme();
+            Console.Clear();
+            Rendezes.CurrentTitle();
+            Rendezes.WriteCentered("*** FUTÁS ADATOK MÓDOSÍTÁSA / TÖRLÉSE ***");
+            Console.ForegroundColor = Rendezes.activeForeground;
+
+            // 1. Listázzuk ki, hogy lássa mit választhat
+            Program.ListaMegjelenites();
+
+            if (Futas.Futasok.Count == 0)
+            {
+                Console.ReadLine();
+                return;
+            }
+
+            Console.WriteLine("\n\tMit szeretnél tenni?");
+            Console.WriteLine("\t1. Törlés");
+            Console.WriteLine("\t2. Módosítás");
+            Console.WriteLine("\t3. Mégse");
+            Console.Write("\tVálasztás: ");
+            string opcio = Console.ReadLine();
+
+            if (opcio == "1") // TÖRLÉS
+            {
+                Console.Write("\n\tAdd meg a törölni kívánt sorszámot: ");
+                if (int.TryParse(Console.ReadLine(), out int sorszam) && sorszam > 0 && sorszam <= Futas.Futasok.Count)
+                {
+                    // A felhasználó 1-től számol, a lista 0-tól, ezért kivonunk 1-et
+                    Futas.Torles(sorszam - 1);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Rendezes.WriteCentered("Sikeres törlés!");
+                    Console.ReadLine();
+                }
+                else
+                {
+                    Rendezes.WriteCentered("Érvénytelen sorszám!");
+                    Console.ReadLine();
+                }
+            }
+            else if (opcio == "2") // MÓDOSÍTÁS
+            {
+                Console.Write("\n\tAdd meg a módosítani kívánt sorszámot: ");
+                if (int.TryParse(Console.ReadLine(), out int sorszam) && sorszam > 0 && sorszam <= Futas.Futasok.Count)
+                {
+                    // Kiválasztott elem referenciája
+                    Futas kivalasztott = Futas.Futasok[sorszam - 1];
+
+                    Console.WriteLine("\n\t(Hagyj üresen egy mezőt, ha nem akarod módosítani)");
+
+                    // Dátum
+                    Console.Write($"\tÚj dátum (Jelenlegi: {kivalasztott.Datum:yyyy-MM-dd}): ");
+                    string ujDatumStr = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(ujDatumStr)) kivalasztott.Datum = DateTime.Parse(ujDatumStr);
+
+                    // Táv
+                    Console.Write($"\tÚj táv (Jelenlegi: {kivalasztott.Tav}): ");
+                    string ujTavStr = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(ujTavStr)) kivalasztott.Tav = int.Parse(ujTavStr);
+
+                    // Idő
+                    Console.Write($"\tÚj idő (Jelenlegi: {kivalasztott.Idotart}): ");
+                    string ujIdo = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(ujIdo)) kivalasztott.Idotart = TimeSpan.Parse(ujIdo);
+
+                    // Pulzus
+                    Console.Write($"\tÚj pulzus (Jelenlegi: {kivalasztott.Maxpulz}): ");
+                    string ujPulzus = Console.ReadLine();
+                    if (!string.IsNullOrWhiteSpace(ujPulzus)) kivalasztott.Maxpulz = ujPulzus;
+
+                    // MENTÉS
+                    Futas.Mentes();
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Rendezes.WriteCentered("Sikeres módosítás!");
+                    Console.ReadLine();
+                }
+                else
+                {
+                    Rendezes.WriteCentered("Érvénytelen sorszám!");
+                    Console.ReadLine();
+                }
+            }
+        }
+        #endregion
     }
 }
