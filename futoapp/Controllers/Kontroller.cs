@@ -60,16 +60,24 @@ namespace futoapp.Controllers
 
             Rendezes.SzemelyAdatokMegjelenitese();
             Console.ForegroundColor = Rendezes.activeForeground;
-            Rendezes.WriteCenteredText("Magasság(cm): ");
-            int magassag = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Testtömeg(kg): ");
-            int testtomeg = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Nyugalmi pulzus (csak a szám, pl: 60): ");
-            int nyugpulz = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
-            DateTime celido = DateTime.Parse(Console.ReadLine());
-            Szemely ujSzemely = new Szemely(magassag, testtomeg, nyugpulz, celido);
-
+            Szemely ujSzemely = null;
+            try
+            {
+                Rendezes.WriteCenteredText("Magasság(cm): ");
+                int magassag = int.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Testtömeg(kg): ");
+                int testtomeg = int.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Nyugalmi pulzus (csak a szám, pl: 60): ");
+                int nyugpulz = int.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
+                DateTime celido = DateTime.Parse(Console.ReadLine());
+                ujSzemely = new Szemely(magassag, testtomeg, nyugpulz, celido);
+            }
+            catch (Exception)
+            {
+                Rendezes.WriteCentered("\nHibás adatbevitel!");
+                return;
+            }
             try
             {
                 ujSzemely.KiirTxt("szemelyek.txt");
