@@ -257,16 +257,24 @@ namespace futoapp
 
             SzemelyAdatokMegjelenitese();
             Console.ForegroundColor = activeForeground;
-            Rendezes.WriteCenteredText("Magasság(cm): ");
-            int magassag = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Testtömeg(kg): ");
-            int testtomeg = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Nyugalmi pulzus (csak a szám, pl: 60): ");
-            int nyugpulz = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
-            DateTime celido = DateTime.Parse(Console.ReadLine());
-            Szemely ujSzemely = new Szemely(magassag, testtomeg, nyugpulz, celido);
-
+            Szemely ujSzemely = null;
+            try
+            {
+                Rendezes.WriteCenteredText("Magasság(cm): ");
+                int magassag = int.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Testtömeg(kg): ");
+                int testtomeg = int.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Nyugalmi pulzus (csak a szám, pl: 60): ");
+                int nyugpulz = int.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Kitűzött lefutás idejére cél (óó:pp:mm): ");
+                DateTime celido = DateTime.Parse(Console.ReadLine());
+                ujSzemely = new Szemely(magassag, testtomeg, nyugpulz, celido);
+            }
+            catch (Exception) 
+            {
+                Rendezes.WriteCentered("\nHibás adatbevitel!");
+                return;
+            }
             try
             {
                 ujSzemely.KiirTxt("szemelyek.txt");
@@ -286,17 +294,25 @@ namespace futoapp
             CurrentTitle();
             Rendezes.WriteCentered("*** ÚJ EDZÉSI ADAT FELVITELE ***\n");
             Console.ForegroundColor = activeForeground;
-            Rendezes.WriteCenteredText("Dátum (éé-hh-nn): ");
-            DateTime datum = DateTime.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Távolság (km): ");
-            int tavolsag = int.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
-            TimeSpan ido = TimeSpan.Parse(Console.ReadLine());
-            Rendezes.WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
-            string maxpulz = Console.ReadLine();
+            Futas ujEdzes = null;
+            try
+            {
+                Rendezes.WriteCenteredText("Dátum (éé-hh-nn): ");
+                DateTime datum = DateTime.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Távolság (km): ");
+                int tavolsag = int.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("5km lefutási ideje (példa: óó:pp:mm): ");
+                TimeSpan ido = TimeSpan.Parse(Console.ReadLine());
+                Rendezes.WriteCenteredText("Maximális pulzus edzés során (példa: 180/perc): ");
+                string maxpulz = Console.ReadLine();
 
-            Futas ujEdzes = new Futas(datum, tavolsag, ido, maxpulz);
-
+                ujEdzes = new Futas(datum, tavolsag, ido, maxpulz);
+            }
+            catch (Exception ex)
+            {
+                Rendezes.WriteCentered($"\nHibás adatbevitel! Hiba: {ex.Message}");
+                return;
+            }
             try
             {
                 Futas.Hozzaad(ujEdzes);
