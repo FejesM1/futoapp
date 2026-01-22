@@ -1,8 +1,10 @@
+using futoapp.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.ConstrainedExecution;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +18,411 @@ namespace futoapp.View
         public static ConsoleColor altTitle = ConsoleColor.Magenta;
         public static ConsoleColor activeTitle = ConsoleColor.Yellow;
         public static ConsoleColor activeBack = ConsoleColor.Red;
+        static int cPoint = 0;
 
+        #region Fõmenü
+        public static void Fomenu()
+        {
+            cPoint = 0;
+            do
+            {
+                bool selected = false;
+                do
+                {
+                    ShowMenu1(cPoint);
+                    switch (Console.ReadKey(true).Key)
+                    {
+                        case ConsoleKey.Enter:
+                            selected = true;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (cPoint > 0) cPoint -= 1;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            if (cPoint < 3) cPoint += 1;
+                            break;
+                    }
+                } while (!selected);
+
+                switch (cPoint)
+                {
+                    case 0:  // Egyéniadat menü
+                        Console.Clear();
+                        Rendezes.ApplyTheme();
+                        Rendezes.WriteCentered("*** SZEMÉLYES ADATOK KEZELÉSE ***\n");
+                        Rendezes.WriteCentered("1. Új mérés rögzítése / Adatok frissítése");
+                        Rendezes.WriteCentered("2. Elõzmények (súly/pulzus változás) megtekintése");
+                        Rendezes.WriteCentered("3. Vissza");
+
+                        Console.Write("\n\tVálasztás: ");
+                        char subValasztas = Console.ReadKey().KeyChar;
+
+                        if (subValasztas == '1')
+                        {
+                            Console.Clear();
+                            Kontroller.Egyeniadatfelvitel();
+                            Rendezes.WriteCentered("Enterre tovább...");
+                            Console.ReadLine();
+                        }
+                        else if (subValasztas == '2')
+                        {
+                            ElozmenyekMegtekintese();
+                        }
+                        break;
+
+                    case 1: //Edzésiadat felvitele
+                        Console.Clear();
+                        Program.FutasMenu();
+                        break;
+
+                    case 2: //Beállítások
+                        Console.Clear();
+                        Kontroller.Beallitasok();
+
+                        break;
+
+                    case 3: // Kilépés
+                        Console.Clear();
+                        Rendezes.WriteCentered("Biztosan kilép? (i/n): ");
+                        if (Console.ReadKey().Key == ConsoleKey.I)
+                        {
+                            Console.Clear();
+
+                            return;
+                        }
+                        else
+                        {
+                            cPoint = 0;
+                        }
+                        break;
+                }
+
+            } while (true);
+        }
+        #endregion
+        #region ShowMenu1 eljárás
+        static void ShowMenu1(int cPoint)
+        {
+
+            Rendezes.ApplyTheme();
+
+            Console.Clear();
+
+            Rendezes.CurrentTitle();
+            Rendezes.WriteCentered("*** Futó App ***");
+
+            Console.ForegroundColor = Rendezes.activeForeground;
+
+
+            void WriteOption(string text, int index)
+            {
+                if (cPoint == index) Rendezes.OptionColor();
+                else Console.ForegroundColor = Rendezes.activeForeground;
+                Rendezes.WriteCentered(text);
+            }
+
+            WriteOption("Egyéni adatok", 0);
+            WriteOption("Edzési adatok", 1);
+
+
+            if (cPoint == 2) Console.ForegroundColor = Rendezes.altTitle;
+            else Console.ForegroundColor = Rendezes.activeForeground;
+            Rendezes.WriteCentered("Beállítások");
+
+            if (cPoint == 3) Console.ForegroundColor = Rendezes.activeBack;
+            else Console.ForegroundColor = Rendezes.activeForeground;
+            Rendezes.WriteCentered("Kilépés");
+
+        }
+        #endregion
+        #region Elõzmények Megntekintése menü
+        static void ElozmenyekMegtekintese()
+        {
+            Console.Clear();
+            Rendezes.ApplyTheme();
+            Rendezes.CurrentTitle();
+            Rendezes.WriteCentered("*** TESTTÖMEG ÉS PULZUS VÁLTOZÁSA ***\n");
+            Console.ForegroundColor = Rendezes.activeForeground;
+
+            if (!File.Exists("szemelyek.txt"))
+            {
+                Rendezes.WriteCentered("Még nincsenek rögzített adatok.");
+                return;
+            }
+
+            string[] sorok = File.ReadAllLines("szemelyek.txt");
+
+            // Fejléc
+            Rendezes.WriteCentered("Dátum       | Súly (kg) | Pulzus (bpm)");
+            Rendezes.WriteCentered("--------------------------------------");
+
+            foreach (string sor in sorok)
+            {
+                if (!string.IsNullOrWhiteSpace(sor))
+                {
+                    try
+                    {
+                        Szemely sz = new Szemely(sor);
+                        // Formázott kiírás
+                        Rendezes.WriteCentered($"{sz.RogzitesIdeje:yyyy-MM-dd}  | {sz.Testtomeg,-9} | {sz.NyugalmiPulzus}");
+                    }
+                    catch
+                    {
+                        // Ha véletlenül rossz sor van, átugorjuk
+                    }
+                }
+            }
+            Console.WriteLine();
+            Rendezes.WriteCentered("Nyomj Entert a visszalépéshez...");
+            Console.ReadLine();
+        }
+        #endregion
+        #region Jelenlegi személyi adatok megjelnítése menü
+        public static void SzemelyAdatokMegjelenitese()
+        {
+            try
+            {
+                string[] sorok = File.ReadAllLines("szemelyek.txt");
+                if (sorok.Length > 0)
+                {
+                    // FONTOS: Az utolsó sort vesszük ki, mert az a legfrissebb állapot!
+                    Szemely szemely = new Szemely(sorok[sorok.Length - 1]);
+
+                    Rendezes.WriteCentered($"--- Jelenlegi állapot ({szemely.RogzitesIdeje:yyyy-MM-dd}) ---");
+                    Rendezes.WriteCentered($"Magasság: {szemely.Magassag} cm");
+                    Rendezes.WriteCentered($"Testtömeg: {szemely.Testtomeg} kg");
+                    Rendezes.WriteCentered($"Nyugalmi pulzus: {szemely.NyugalmiPulzus} bpm");
+                    Rendezes.WriteCentered($"Cél idõ: {szemely.Cel:hh\\:mm\\:ss}");
+                    Rendezes.WriteCentered("-----------------------------");
+                }
+                else
+                {
+                    Rendezes.WriteCentered("Nincsenek személyes adatok.");
+                }
+            }
+            catch (Exception)
+            {
+                Rendezes.WriteCentered("Hiba az adatok olvasásakor vagy nincsenek adatok.");
+            }
+        }
+        #endregion
+        #region Téma
+        static int belcPoint;
+        public static void Tema()
+        {
+            belcPoint = 0;
+            do
+            {
+                bool selected = false;
+                do
+                {
+                    AlShowMenu2(belcPoint);
+                    switch (Console.ReadKey(true).Key)
+                    {
+                        case ConsoleKey.Enter:
+                            selected = true;
+                            break;
+                        case ConsoleKey.UpArrow:
+                            if (belcPoint > 0) belcPoint -= 1;
+                            break;
+                        case ConsoleKey.DownArrow:
+                            if (belcPoint < 11) belcPoint += 1;
+                            break;
+                    }
+                } while (!selected);
+
+
+                switch (belcPoint)
+                {
+                    case 0:
+                        Rendezes.activeBackground = ConsoleColor.Black;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 1:
+                        Rendezes.activeBackground = ConsoleColor.White;
+                        Rendezes.activeForeground = ConsoleColor.Black;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.DarkYellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 2:
+                        Rendezes.activeBackground = ConsoleColor.DarkRed;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Blue;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.Blue;
+                        break;
+
+                    case 3:
+                        Rendezes.activeBackground = ConsoleColor.DarkMagenta;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Black;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.DarkYellow;
+                        break;
+
+                    case 4:
+                        Rendezes.activeBackground = ConsoleColor.Black;
+                        Rendezes.activeForeground = ConsoleColor.Cyan;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.DarkYellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 5:
+                        Rendezes.activeBackground = ConsoleColor.Black;
+                        Rendezes.activeForeground = ConsoleColor.DarkYellow;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Cyan;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 6:
+                        Rendezes.activeBackground = ConsoleColor.Black;
+                        Rendezes.activeForeground = ConsoleColor.DarkRed;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Cyan;
+                        Rendezes.activeBack = ConsoleColor.Blue;
+                        break;
+
+                    case 7:
+                        Rendezes.activeBackground = ConsoleColor.DarkYellow;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Blue;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 8:
+                        Rendezes.activeBackground = ConsoleColor.DarkBlue;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 9:
+                        Rendezes.activeBackground = ConsoleColor.DarkGreen;
+                        Rendezes.activeForeground = ConsoleColor.White;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Yellow;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 10:
+                        Rendezes.activeBackground = ConsoleColor.DarkYellow;
+                        Rendezes.activeForeground = ConsoleColor.Blue;
+                        Rendezes.altTitle = ConsoleColor.Magenta;
+                        Rendezes.activeTitle = ConsoleColor.Cyan;
+                        Rendezes.activeBack = ConsoleColor.Red;
+                        break;
+
+                    case 11:
+
+                        belcPoint = 0;
+                        return;
+                }
+
+                // Azonnali alkalmazás, hogy látszódjon az eredmény
+                Rendezes.ApplyTheme();
+
+                Console.Clear();
+
+            } while (true);
+        }
+        #endregion
+        #region AlShowMenu eljárás
+        public static void AlShowMenu(int belcPoint)
+        {
+
+            Rendezes.ApplyTheme();
+            Console.Clear();
+            Rendezes.CurrentaltTitle();
+            Rendezes.WriteCentered("--- Beállítások ---");
+            Console.ForegroundColor = Rendezes.activeForeground;
+
+            if (belcPoint == 0) Rendezes.OptionColor();
+            else Console.ForegroundColor = Rendezes.activeForeground;
+            Rendezes.WriteCentered("Téma");
+
+            if (belcPoint == 1) Console.ForegroundColor = Rendezes.activeBack;
+            else Console.ForegroundColor = Rendezes.activeForeground;
+            Rendezes.WriteCentered("Vissza");
+        }
+        #endregion
+        #region AlShowMenu2 eljárás
+        static void AlShowMenu2(int belcPoint)
+        {
+            Rendezes.ApplyTheme();
+            Console.Clear();
+            Rendezes.CurrentaltTitle();
+            Rendezes.WriteCentered("--- Téma ---");
+            Console.ForegroundColor = Rendezes.activeForeground;
+
+            // Segédfüggvény a lista kirajzoláshoz
+            void WriteThemeOption(string text, int index)
+            {
+                if (belcPoint == index)
+                {
+                    Rendezes.OptionColor();
+                }
+                else Console.ForegroundColor = Rendezes.activeForeground;
+                Rendezes.WriteCentered(text);
+            }
+
+            WriteThemeOption("Fekete háttér - Fehér szöveg (alap)", 0);
+            WriteThemeOption("Fehér háttér - Fekete szöveg", 1);
+            WriteThemeOption("Vörös háttér - Fehér szöveg", 2);
+            WriteThemeOption("Magenta háttér - Fehér szöveg", 3);
+            WriteThemeOption("Fekete háttér - Cyán szöveg", 4);
+            WriteThemeOption("Fekete háttér - Sárga szöveg", 5);
+            WriteThemeOption("Fekete háttér - Vörös szöveg", 6);
+            WriteThemeOption("Sárga háttér - Fehér szöveg", 7);
+            WriteThemeOption("Kék háttér - Fehér szöveg", 8);
+            WriteThemeOption("Zöld háttér - Fehér szöveg", 9);
+            WriteThemeOption("Sárga háttér - Kék szöveg", 10);
+
+
+
+            if (belcPoint == 11)
+            {
+                Console.ForegroundColor = Rendezes.activeBack;
+            }
+            else
+            {
+                Console.ForegroundColor = Rendezes.activeForeground;
+            }
+            Rendezes.WriteCentered("Vissza");
+
+            Console.ForegroundColor = Rendezes.activeForeground;
+        }
+        #endregion
+        #region Edzési lista megjelenítése
+        public static void ListaMegjelenites()
+        {
+            // Listázás sorszámmal
+
+
+            Rendezes.WriteCentered("Sorszám | Dátum      | Táv  | Idõ      | Pulzus");
+            Rendezes.WriteCentered("" + new string('-', 50));
+
+            for (int i = 0; i < Futas.Futasok.Count; i++)
+            {
+                var f = Futas.Futasok[i];
+                Rendezes.WriteCentered($"{i + 1}. | {f.Datum:yyyy-MM-dd} | {f.Tav,-3} | {f.Idotart,-8} | {f.Maxpulz}");
+            }
+            Rendezes.WriteCentered("" + new string('=', 50));
+            string osszIdoSzoveg = Futas.OsszesitettIdo();
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Rendezes.WriteCentered($"Összes edzésidõ: {osszIdoSzoveg}");
+            Console.ForegroundColor = Rendezes.activeForeground;
+        }
+        #endregion
         #region Középrehelyezés
         public static void WriteCentered(string text)
         {
